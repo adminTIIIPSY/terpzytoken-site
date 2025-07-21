@@ -77,4 +77,79 @@
 
     #countdown {
       font-size: 1.2rem;
-      col
+      color: #f33;
+      text-shadow: 0 0 10px red, 0 0 20px purple;
+      margin-bottom: 1.5rem;
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to TerpzyVerse.com</h1>
+  <h2>TERPZY TOKEN PRE-SALE EVENT</h2>
+
+  <img src="assets/terpzytoken-spin.gif" alt="TRPZ Coin" class="gif" />
+
+  <div class="copy">
+    <p><strong>DON’T MISS YOUR CHANCE TO BECOME A FOUNDING MEMBER.</strong><br>
+    ONLY 250,000 TOKENS AVAILABLE FOR PRE-SALE. DON’T MISS OUT.</p>
+    <p><strong>GET YOUR $TRPZ TOKENS FOR JUST $1 EACH</strong></p>
+    <p>YOU’LL GAIN ACCESS TO FOUNDERS NFTS AND LEGENDARY BONUSES — GET YOURS NOW!!!</p>
+  </div>
+
+  <div class="buttons">
+    <button id="buyBtn">BUY $TRPZ</button>
+    <button id="registerBtn">REGISTER</button>
+    <button id="clubsocialBtn">CLUBSOCIAL</button>
+  </div>
+
+  <div id="countdown">Loading countdown...</div>
+
+  <footer>© 2025 TerpzyVerse.com. All rights reserved.</footer>
+
+  <script>
+    const countdownEl = document.getElementById('countdown');
+    const target = new Date("2026-04-20T16:20:00-05:00").getTime();
+
+    function updateCountdown() {
+      const now = Date.now();
+      const diff = target - now;
+      if (diff <= 0) {
+        countdownEl.textContent = "🔥 It’s 4/20/2026 4:20 PM CT! 🔥";
+        clearInterval(timer);
+        return;
+      }
+      const d = Math.floor(diff / (1000*60*60*24));
+      const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+      const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+      const s = Math.floor((diff % (1000*60)) / 1000);
+      countdownEl.textContent = `${d}d ${h}h ${m}m ${s}s to 4/20/26 4:20 PM CT`;
+    }
+
+    const timer = setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Button behavior
+    document.getElementById("buyBtn").onclick = () => {
+      const wallet = "0x8b67348306785692201fc328a7e954a178a42e62";
+      navigator.clipboard.writeText(wallet);
+      alert("Wallet address copied. Send MATIC to:\n\n" + wallet);
+      location.href = "register.html";
+    };
+    document.getElementById("registerBtn").onclick = () => {
+      location.href = "register.html";
+    };
+    document.getElementById("clubsocialBtn").onclick = () => {
+      location.href = "https://clubsocial.click";
+    };
+  </script>
+</body>
+</html>
