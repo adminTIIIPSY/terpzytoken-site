@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TerpzyVerse Token Pre‑Sale</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    /* full‑screen nebula background */
+    body, html { margin:0; padding:0; height:100%; overflow:hidden; }
+    body {
+      background: url('terpzyverse-bg.png') center/cover no-repeat;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .container {
+      position: relative;
+      max-width: 1000px;
+      text-align: center;
+      padding: 2rem;
+      flex-grow: 1;
+    }
+    h1 { font-size: 3rem; color: #f33; text-decoration: underline; }
+    h2 { font-size: 2rem; margin-bottom: 1rem; }
+    .gif { width: 250px; margin: 1rem auto; }
+    .copy { font-size: 1.2rem; line-height:1.4; max-width: 600px; margin: auto; }
+    .buttons {
+      position: absolute;
+      left: 2rem; bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+    .buttons button {
+      background: transparent;
+      border: 3px solid gold;
+      padding: .5rem 1.5rem;
+      font-size: 1.1rem;
+      color: #f33;
+      cursor: pointer;
+    }
+
+    /* countdown */
+    #countdown {
+      text-align: center;
+      font-size: 2rem;
+      color: #f33;
+      text-shadow: 0 0 10px #f33, 0 0 20px purple;
+      margin: 1rem 0;
+    }
+
+    /* footer */
+    footer {
+      text-align: center;
+      padding: .5rem;
+      background: rgba(0,0,0,.6);
+      font-size: .9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to TerpzyVerse.com</h1>
+    <h2>TERPZY TOKEN PRE‑SALE EVENT</h2>
+    <img src="terpzytoken-spin.gif" alt="$TRPZ Token" class="gif">
+    <p class="copy">
+      Don’t miss your chance to become a founding member.<br>
+      Only 250,000 tokens available for pre‑sale.<br>
+      <strong>Get your $TRPZ tokens for just $1 each!</strong>
+    </p>
+
+    <div class="buttons">
+      <button id="buyBtn">BUY $TRPZ</button>
+      <button id="registerBtn">REGISTER</button>
+      <button id="clubsocialBtn">CLUBSOCIAL</button>
+    </div>
+  </div>
+
+  <!-- countdown -->
+  <div id="countdown">Loading countdown…</div>
+
+  <!-- footer -->
+  <footer>© 2025 TerpzyVerse.com. All rights reserved.</footer>
+
+  <!-- BUY modal -->
+  <div id="buyModal" class="modal">
+    <div class="box">
+      <h3>Step 1: Wallet Copied</h3>
+      <p>Your TerpzyVerse wallet address has been copied to clipboard.</p>
+      <p>Next, send MATIC to:</p>
+      <pre id="walletAddr" style="background:#222;padding:.5rem;"></pre>
+      <p>Once you’ve sent, click “I’ve Paid” to register and link your receipt.</p>
+      <button id="paidBtn">I’ve Paid</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // countdown to 4/20/2026 4:20 PM Central (UTC‑5 in April)
+    const countdownEl = document.getElementById('countdown');
+    const target = new Date("2026-04-20T16:20:00-05:00").getTime();
+
+    function updateCountdown() {
+      const now   = Date.now();
+      const diff  = target - now;
+      if (diff <= 0) {
+        countdownEl.textContent = "🔥 It’s 4/20/2026 4:20 PM CT! 🔥";
+        clearInterval(timer);
+        return;
+      }
+      const days    = Math.floor(diff / (1000*60*60*24));
+      const hours   = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+      const minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
+      const seconds = Math.floor((diff % (1000*60)) / 1000);
+      countdownEl.textContent = 
+        `${days}d ${hours}h ${minutes}m ${seconds}s to 4/20/26 4:20 PM CT`;
+    }
+
+    const timer = setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
