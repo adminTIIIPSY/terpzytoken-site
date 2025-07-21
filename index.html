@@ -5,7 +5,6 @@
   <title>TerpzyVerse Token Pre‑Sale</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    /* full‑screen nebula background */
     body, html { margin:0; padding:0; height:100%; overflow:hidden; }
     body {
       background: url('assets/terpzyverse-bg.png') center/cover no-repeat;
@@ -41,8 +40,6 @@
       color: #f33;
       cursor: pointer;
     }
-
-    /* countdown */
     #countdown {
       text-align: center;
       font-size: 2rem;
@@ -50,13 +47,38 @@
       text-shadow: 0 0 10px #f33, 0 0 20px purple;
       margin: 1rem 0;
     }
-
-    /* footer */
     footer {
       text-align: center;
       padding: .5rem;
       background: rgba(0,0,0,.6);
       font-size: .9rem;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .box {
+      background: #111;
+      border: 2px solid gold;
+      padding: 2rem;
+      color: white;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 0 20px red;
     }
   </style>
 </head>
@@ -73,15 +95,12 @@
 
     <div class="buttons">
       <button id="buyBtn">BUY $TRPZ</button>
-      <button id="registerBtn">REGISTER</button>
-      <button id="clubsocialBtn">CLUBSOCIAL</button>
+      <button id="registerBtn" onclick="window.location.href='register.html'">REGISTER</button>
+      <button id="clubsocialBtn" onclick="window.location.href='https://clubsocial.click'">CLUBSOCIAL</button>
     </div>
   </div>
 
-  <!-- countdown -->
   <div id="countdown">Loading countdown…</div>
-
-  <!-- footer -->
   <footer>© 2025 TerpzyVerse.com. All rights reserved.</footer>
 
   <!-- BUY modal -->
@@ -96,9 +115,8 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
   <script>
-    // countdown to 4/20/2026 4:20 PM Central (UTC‑5 in April)
+    // Countdown to 4/20/2026 4:20 PM Central Time
     const countdownEl = document.getElementById('countdown');
     const target = new Date("2026-04-20T16:20:00-05:00").getTime();
 
@@ -106,20 +124,4 @@
       const now   = Date.now();
       const diff  = target - now;
       if (diff <= 0) {
-        countdownEl.textContent = "🔥 It’s 4/20/2026 4:20 PM CT! 🔥";
-        clearInterval(timer);
-        return;
-      }
-      const days    = Math.floor(diff / (1000*60*60*24));
-      const hours   = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-      const minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
-      const seconds = Math.floor((diff % (1000*60)) / 1000);
-      countdownEl.textContent = 
-        `${days}d ${hours}h ${minutes}m ${seconds}s to 4/20/26 4:20 PM CT`;
-    }
-
-    const timer = setInterval(updateCountdown, 1000);
-    updateCountdown();
-  </script>
-</body>
-</html>
+        countdownEl.textConten
