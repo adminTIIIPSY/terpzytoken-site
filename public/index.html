@@ -139,11 +139,9 @@
 
     // Button behavior
     document.getElementById("buyBtn").onclick = () => {
-      const wallet = "0x8b67348306785692201fc328a7e954a178a42e62";
-      navigator.clipboard.writeText(wallet);
-      alert("Wallet address copied. Send MATIC to:\n\n" + wallet);
-      location.href = "register.html";
-    };
+  // Send them straight to the new store page
+  window.location.href = "/store.html";
+};
     document.getElementById("registerBtn").onclick = () => {
       location.href = "register.html";
     };
