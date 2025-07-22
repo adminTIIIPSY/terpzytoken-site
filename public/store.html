@@ -4,11 +4,35 @@
   <meta charset="UTF-8" />
   <title>TerpzyVerse Pre‑Sale Store</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Your main stylesheet -->
   <link rel="stylesheet" href="/css/main.css">
-  <script type="module" src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js"></script>
-  <script type="module" src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js"></script>
-  <script type="module" src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js"></script>
-  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+
+  <!-- Firebase SDK + Initialization -->
+  <script type="module">
+    import { initializeApp }   from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+    import { getAuth }         from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+    import { getFirestore }    from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+    // ← Paste your full Firebase config here:
+    const firebaseConfig = {
+      apiKey: "AIzaSyB-57VtukbNwVr70ko3ZTIaEfx5DF6KNI4",
+      authDomain: "terpzyverse-417bd.firebaseapp.com",
+      projectId: "terpzyverse-417bd",
+      storageBucket: "terpzyverse-417bd.firebasestorage.app",
+      messagingSenderId: "672502191747",
+      appId: "1:672502191747:web:ce3e6fafbe4fd90f442db6"
+    };
+
+    // Initialize Firebase
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+  </script>
+
+  <!-- PayPal SDK (replace with your real client‑ID) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AfZpW6tVwBxM59yDHk1xRmnmdKN070chS1p9-5pmvhUqotqXe74dTDbOqiQDIDKQPCHaFPmA7u7WO5d_&currency=USD"></script>
+  <!-- Coinbase Commerce -->
   <script src="https://commerce.coinbase.com/v1/checkout.js"></script>
 </head>
 <body>
@@ -16,14 +40,10 @@
     <h1>TerpzyVerse Store (Pre‑Sale)</h1>
     <div id="packages"></div>
   </div>
-  <footer>© 2025 TerpzyVerse.com. All rights reserved.</footer>
-  <script>
-    const firebaseConfig = {
-      apiKey: "YOUR_FIREBASE_API_KEY",
-      authDomain: "YOUR_FIREBASE_AUTH_DOMAIN",
-      projectId: "YOUR_FIREBASE_PROJECT_ID"
-    };
-  </script>
+
+  <footer>© 2025 TerpzyVerse.com. All rights reserved.</footer>
+
+  <!-- Your store logic -->
   <script type="module" src="/js/store.js"></script>
 </body>
 </html>
