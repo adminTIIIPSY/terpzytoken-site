@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register • TerpzyVerse</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { font-family: 'Orbitron', sans-serif; background:#000; color:#fff; padding:2rem; }
+    form { max-width:400px; margin:auto; display:flex; flex-direction:column; gap:1rem; }
+    input, select { padding:.5rem; border-radius:.25rem; border:none; }
+    button { padding:.75rem; background:#f33; border:none; color:#fff; cursor:pointer; }
+  </style>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js"></script>
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "YOUR_FIREBASE_CONFIG",
+      authDomain: "YOUR_FIREBASE_CONFIG",
+      projectId: "YOUR_FIREBASE_CONFIG",
+      // …etc
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
+  </script>
+</head>
+<body>
+  <h1>Create Your Account</h1>
+  <form id="regForm">
+    <input type="email"   id="email"    placeholder="Email" required>
+    <input type="text"    id="name"     placeholder="Full Name" required>
+    <input type="text"    id="address"  placeholder="Address" required>
+    <input type="tel"     id="phone"    placeholder="Phone Number" required>
+    <input type="text"    id="username" placeholder="Username" required>
+    <input type="password" id="pass"    placeholder="Password" required>
+    <label>Choose Avatar:</label>
+    <select id="avatar">
+      <option value="avatar1.png">Avatar 1</option>
+      <option value="avatar2.png">Avatar 2</option>
+      <!-- …etc -->
+    </select>
+    <button type="submit">Register</button>
+  </form>
+
+  <script>
+    document.getElementById('regForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const email    = emailEl.value;
+      const pass     = passEl.value;
+      const name     = nameEl.value;
+      const address  = addressEl.value;
+      const phone    = phoneEl.value;
+      const username = usernameEl.value;
+      const avatar   = avatarEl.value;
+
+      // 1) create user in Firebase Auth
+      const cred = await auth.createUserWithEmailAndPassword(email, pass);
+      const uid  = cred.user.uid;
+
+      // 2) send email‐verification
+      await cred.user.sendEmailVerification();
+
+      // 3) store profile in Firestore
+      await db.collection('users').doc(uid).set({
+        name, address, phone, username, avatar,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      // 4) [OPTIONAL] call your Cloud Function to also
+      //    register them on ClubSocial.click, link their
+      //    temp wallet, etc.
+
+      alert('Account created!  Verify your email before logging in.');
+      window.location.href = '/';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+body, html { margin:0; padding:0; height:100%; overflow:hidden; }
+body {
+  background: url('/assets/terpzyverse-bg.png') center/cover no-repeat;
+  font-family: 'Orbitron', sans-serif;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.container {
+  position: relative;
+  max-width: 1000px;
+  text-align: center;
+  padding: 2rem;
+  flex-grow: 1;
+}
+.hero .coin {
+  width: 150px;
+  height: 150px;
+  animation: spin 2s linear infinite;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.buttons {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+button {
+  font-size: 1.25rem;
+  padding: 0.75rem 1.5rem;
+  background: #f33;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+}
+.countdown {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+}
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(0,0,0,0.5);
+}
