@@ -67,3 +67,29 @@ function renderStore(uid) {
       });
   });
 }
+
+
+// Add Coinbase Commerce click handlers
+PACKAGES.forEach(pkg => {
+  const cryptoBtn = document.getElementById(`crypto-${pkg.id}`);
+  if (cryptoBtn) {
+    cryptoBtn.onclick = async () => {
+      const res = await fetch(`${FN_BASE}/createCoinbaseCharge`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: auth.currentUser.uid,
+          packageId: pkg.id,
+          tokens: pkg.tokens,
+          price: pkg.price
+        })
+      });
+      const data = await res.json();
+      if (data && data.hosted_url) {
+        window.open(data.hosted_url, '_blank');
+      } else {
+        alert('There was a problem generating the crypto payment link.');
+      }
+    };
+  }
+});
