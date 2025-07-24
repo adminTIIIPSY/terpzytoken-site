@@ -55,21 +55,6 @@
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js"></script>
-
-  <script>
-    // Replace with your real config (already injected from your repo)
-    const firebaseConfig = {
-      apiKey: "AIzaSyB-57VtukbNwVr70ko3ZTIaEfx5DF6KNI4",
-      authDomain: "terpzyverse-417bd.firebaseapp.com",
-      projectId: "terpzyverse-417bd",
-      storageBucket: "terpzyverse-417bd.appspot.com",
-      messagingSenderId: "672502191747",
-      appId: "1:672502191747:web:040fec9ad1bdd6dd442db6"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-  </script>
 </head>
 
 <body>
@@ -94,6 +79,19 @@
   </form>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB-57VtukbNwVr70ko3ZTIaEfx5DF6KNI4",
+      authDomain: "terpzyverse-417bd.firebaseapp.com",
+      projectId: "terpzyverse-417bd",
+      storageBucket: "terpzyverse-417bd.appspot.com",
+      messagingSenderId: "672502191747",
+      appId: "1:672502191747:web:040fec9ad1bdd6dd442db6"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
+
     document.getElementById('regForm').addEventListener('submit', async e => {
       e.preventDefault();
 
@@ -110,17 +108,12 @@
         const uid = userCred.user.uid;
 
         await db.collection("users").doc(uid).set({
-          name,
-          email,
-          address,
-          phone,
-          username,
-          avatar,
+          name, email, address, phone, username, avatar,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
         alert("🎉 Account created successfully!");
-        window.location.href = "/store.html"; // change to /lobby.html or /bonus.html if needed
+        window.location.href = "/store.html";
 
       } catch (err) {
         alert("🚨 Error: " + err.message);
@@ -129,3 +122,4 @@
   </script>
 </body>
 </html>
+
