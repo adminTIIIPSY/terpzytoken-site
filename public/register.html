@@ -4,77 +4,127 @@
   <meta charset="UTF-8">
   <title>Register • TerpzyVerse</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Orbitron', sans-serif; background:#000; color:#fff; padding:2rem; }
-    form { max-width:400px; margin:auto; display:flex; flex-direction:column; gap:1rem; }
-    input, select { padding:.5rem; border-radius:.25rem; border:none; }
-    button { padding:.75rem; background:#f33; border:none; color:#fff; cursor:pointer; }
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: #000;
+      color: #fff;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      color: #f33;
+      text-shadow: 0 0 10px red;
+    }
+    form {
+      max-width: 400px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: #111;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 15px red;
+    }
+    input, select {
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.75rem;
+      background: #f33;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #c00;
+    }
   </style>
-  <!-- Firebase -->
+
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js"></script>
+
   <script>
-    // Initialize Firebase
+    // Replace with your real config (already injected from your repo)
     const firebaseConfig = {
       apiKey: "AIzaSyB-57VtukbNwVr70ko3ZTIaEfx5DF6KNI4",
-      authDomain: "AIzaSyB-57VtukbNwVr70ko3ZTIaEfx5DF6KNI4",
-      projectId: "AIzaSyB-57VtukbNwVr70ko3ZTIaEfx5DF6KNI4",
-      // …etc
+      authDomain: "terpzyverse-417bd.firebaseapp.com",
+      projectId: "terpzyverse-417bd",
+      storageBucket: "terpzyverse-417bd.appspot.com",
+      messagingSenderId: "672502191747",
+      appId: "1:672502191747:web:040fec9ad1bdd6dd442db6"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const db   = firebase.firestore();
+    const db = firebase.firestore();
   </script>
 </head>
+
 <body>
   <h1>Create Your Account</h1>
   <form id="regForm">
-    <input type="email"   id="email"    placeholder="Email" required>
-    <input type="text"    id="name"     placeholder="Full Name" required>
-    <input type="text"    id="address"  placeholder="Address" required>
-    <input type="tel"     id="phone"    placeholder="Phone Number" required>
-    <input type="text"    id="username" placeholder="Username" required>
-    <input type="password" id="pass"    placeholder="Password" required>
-    <label>Choose Avatar:</label>
-    <select id="avatar">
+    <input type="email"    id="email"    placeholder="Email" required>
+    <input type="text"     id="name"     placeholder="Full Name" required>
+    <input type="text"     id="address"  placeholder="Address" required>
+    <input type="tel"      id="phone"    placeholder="Phone Number" required>
+    <input type="text"     id="username" placeholder="Username" required>
+    <input type="password" id="pass"     placeholder="Password" required>
+
+    <label for="avatar">Choose Avatar:</label>
+    <select id="avatar" required>
       <option value="avatar1.png">Avatar 1</option>
       <option value="avatar2.png">Avatar 2</option>
-      <!-- …etc -->
+      <option value="avatar3.png">Avatar 3</option>
+      <option value="avatar4.png">Avatar 4</option>
     </select>
+
     <button type="submit">Register</button>
   </form>
 
   <script>
     document.getElementById('regForm').addEventListener('submit', async e => {
       e.preventDefault();
-      const email    = emailEl.value;
-      const pass     = passEl.value;
-      const name     = nameEl.value;
-      const address  = addressEl.value;
-      const phone    = phoneEl.value;
-      const username = usernameEl.value;
-      const avatar   = avatarEl.value;
 
-      // 1) create user in Firebase Auth
-      const cred = await auth.createUserWithEmailAndPassword(email, pass);
-      const uid  = cred.user.uid;
+      const email    = document.getElementById('email').value;
+      const password = document.getElementById('pass').value;
+      const name     = document.getElementById('name').value;
+      const address  = document.getElementById('address').value;
+      const phone    = document.getElementById('phone').value;
+      const username = document.getElementById('username').value;
+      const avatar   = document.getElementById('avatar').value;
 
-      // 2) send email‐verification
-      await cred.user.sendEmailVerification();
+      try {
+        const userCred = await auth.createUserWithEmailAndPassword(email, password);
+        const uid = userCred.user.uid;
 
-      // 3) store profile in Firestore
-      await db.collection('users').doc(uid).set({
-        name, address, phone, username, avatar,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
+        await db.collection("users").doc(uid).set({
+          name,
+          email,
+          address,
+          phone,
+          username,
+          avatar,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
-      // 4) [OPTIONAL] call your Cloud Function to also
-      //    register them on ClubSocial.click, link their
-      //    temp wallet, etc.
+        alert("🎉 Account created successfully!");
+        window.location.href = "/store.html"; // change to /lobby.html or /bonus.html if needed
 
-      alert('Account created!  Verify your email before logging in.');
-      window.location.href = '/';
+      } catch (err) {
+        alert("🚨 Error: " + err.message);
+      }
     });
   </script>
 </body>
