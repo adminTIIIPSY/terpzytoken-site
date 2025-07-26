@@ -1,127 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Register • TerpzyVerse</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>Create Account – TerpzyVerse ClubSocial</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
   <style>
     body {
+      margin: 0;
+      background: black;
       font-family: 'Orbitron', sans-serif;
-      background: #000;
-      color: #fff;
-      padding: 2rem;
-    }
-    h1 {
-      text-align: center;
-      color: #f33;
-      text-shadow: 0 0 10px red;
-    }
-    form {
-      max-width: 400px;
-      margin: auto;
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      background: #111;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+    .card {
+      background: rgba(0,0,0,0.75);
       padding: 2rem;
       border-radius: 12px;
-      box-shadow: 0 0 15px red;
+      box-shadow: 0 0 15px red, 0 0 30px green;
+      width: 350px;
     }
-    input, select {
+    h1 { margin-bottom: 1rem; }
+    input, select, button {
+      width: 100%;
+      margin: 0.5rem 0;
       padding: 0.75rem;
-      border: none;
       border-radius: 8px;
-      font-family: 'Orbitron', sans-serif;
+      border: none;
       font-size: 1rem;
     }
     button {
-      padding: 0.75rem;
-      background: #f33;
-      border: none;
-      border-radius: 8px;
+      background: red;
       color: white;
-      font-weight: bold;
-      font-size: 1rem;
       cursor: pointer;
-      transition: background 0.3s;
     }
-    button:hover {
-      background: #c00;
-    }
+    .error { color: #ff4444; }
+    .success { color: #66ff66; }
   </style>
-
-  <!-- ✅ Use compat Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore-compat.js"></script>
 </head>
-
 <body>
-  <h1>Create Your Account</h1>
-  <form id="regForm">
-    <input type="email"    id="email"    placeholder="Email" required>
-    <input type="text"     id="name"     placeholder="Full Name" required>
-    <input type="text"     id="address"  placeholder="Address" required>
-    <input type="tel"      id="phone"    placeholder="Phone Number" required>
-    <input type="text"     id="username" placeholder="Username" required>
-    <input type="password" id="pass"     placeholder="Password" required>
+  <div class="card">
+    <h1>Create Your Account</h1>
+    <form id="registerForm">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="password" id="confirm" placeholder="Confirm Password" required />
+      <select id="state" required>
+        <option value="">Select State</option>
+        <option value="CA">California</option>
+        <option value="TX">Texas</option>
+        <option value="NY">New York</option>
+        <option value="FL">Florida</option>
+        <!-- add more states as needed -->
+      </select>
+      <button type="submit">Sign Up</button>
+    </form>
+    <div id="message"></div>
+    <p style="margin-top: 1rem;">Already have an account? <a href="login.html" style="color: #66ccff;">Log In</a></p>
+  </div>
 
-    <label for="avatar">Choose Avatar:</label>
-    <select id="avatar" required>
-      <option value="avatar1.png">Avatar 1</option>
-      <option value="avatar2.png">Avatar 2</option>
-      <option value="avatar3.png">Avatar 3</option>
-      <option value="avatar4.png">Avatar 4</option>
-    </select>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    <button type="submit">Register</button>
-  </form>
-
-  <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyB-57VtukbNwVr70ko3ZTIaEfx5DF6KNI4",
-      authDomain: "terpzyverse-417bd.firebaseapp.com",
-      projectId: "terpzyverse-417bd",
-      storageBucket: "terpzyverse-417bd.appspot.com",
-      messagingSenderId: "672502191747",
-      appId: "1:672502191747:web:040fec9ad1bdd6dd442db6"
+      apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
+      authDomain: "terpzyverseclubsocial.firebaseapp.com",
+      projectId: "terpzyverseclubsocial",
+      storageBucket: "terpzyverseclubsocial.appspot.com",
+      messagingSenderId: "125077088870",
+      appId: "1:125077088870:web:91195a40d290c6bff09ba7"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    document.getElementById('regForm').addEventListener('submit', async e => {
+    const form = document.getElementById("registerForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      message.textContent = "";
+      const email = form.email.value;
+      const password = form.password.value;
+      const confirm = form.confirm.value;
+      const state = form.state.value;
 
-      const email    = document.getElementById('email').value;
-      const password = document.getElementById('pass').value;
-      const name     = document.getElementById('name').value;
-      const address  = document.getElementById('address').value;
-      const phone    = document.getElementById('phone').value;
-      const username = document.getElementById('username').value;
-      const avatar   = document.getElementById('avatar').value;
+      if (password !== confirm) {
+        message.textContent = "Passwords do not match.";
+        message.className = "error";
+        return;
+      }
 
       try {
-        console.log("Creating user account...");
-        const userCred = await auth.createUserWithEmailAndPassword(email, password);
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
         const uid = userCred.user.uid;
 
-        console.log("User created:", uid);
-
-        await db.collection("users").doc(uid).set({
-          name, email, address, phone, username, avatar,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        await setDoc(doc(db, "users", uid), {
+          email: email,
+          state: state,
+          createdAt: Date.now()
         });
 
-        console.log("Data saved to Firestore.");
-        alert("🎉 Account created successfully!");
-        window.location.href = "/store.html";
-
+        message.textContent = "Account created! Redirecting...";
+        message.className = "success";
+        setTimeout(() => {
+          window.location.href = "avatar.html";
+        }, 1500);
       } catch (err) {
-        console.error("ERROR:", err);
-        alert("🚨 Error: " + err.message);
+        message.textContent = err.message;
+        message.className = "error";
       }
     });
   </script>
