@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TerpzyVerse Lobby</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      background: url("/public/terpzyverse-bg.png") no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Orbitron', sans-serif;
+      color: white;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 15px #ff0040;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .profile img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ff0080;
+    }
+
+    .profile span {
+      font-size: 1.2rem;
+    }
+
+    .games {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 10vh;
+      flex-wrap: wrap;
+    }
+
+    .game-btn {
+      padding: 2rem;
+      font-size: 1.5rem;
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px solid #ff00cc;
+      border-radius: 12px;
+      color: white;
+      text-shadow: 0 0 10px #ff66cc;
+      cursor: pointer;
+      transition: 0.3s ease;
+      min-width: 180px;
+      text-align: center;
+    }
+
+    .game-btn:hover {
+      background: #ff00cc;
+      color: black;
+    }
+
+    #logoutBtn {
+      background: transparent;
+      border: 2px solid #66ccff;
+      color: #66ccff;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 8vh;
+      font-size: 0.9rem;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="profile">
+      <img id="avatar" src="/public/avatars/neon_player1.png" alt="Avatar">
+      <span id="username">Welcome, Explorer</span>
+    </div>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <section class="games">
+    <div class="game-btn" onclick="location.href='https://clubsocial.click'">ClubSocial</div>
+    <div class="game-btn" onclick="location.href='/vaultnova.html'">VaultNova</div>
+    <div class="game-btn" onclick="location.href='/og.html'">Original Games</div>
+  </section>
+
+  <footer>
+    &copy; 2025 TerpzyVerse. Built with love and neon stardust.
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
+      authDomain: "terpzyverseclubsocial.firebaseapp.com",
+      projectId: "terpzyverseclubsocial",
+      storageBucket: "terpzyverseclubsocial.appspot.com",
+      messagingSenderId: "125077088870",
+      appId: "1:125077088870:web:91195a40d290c6bff09ba7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const usernameSpan = document.getElementById("username");
+    const avatarImg = document.getElementById("avatar");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    onAuthStateChanged(auth, async user => {
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          usernameSpan.textContent = `Welcome, ${data.username || user.email}`;
+          avatarImg.src = `/public/avatars/${data.avatar || "neon_player1.png"}`;
+        } else {
+          usernameSpan.textContent = `Welcome, ${user.email}`;
+        }
+      } else {
+        window.location.href = "/login.html";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "/login.html";
+      });
+    });
+  </script>
+</body>
+</html>
