@@ -52,8 +52,8 @@
     <form id="regForm">
       <input type="email" id="regEmail" placeholder="Email" required />
       <input type="password" id="regPassword"
-        placeholder="Password (min 8 chars, 1 uppercase, 1 number)"
-        pattern="(?=.*\\d)(?=.*[A-Z]).{8,}" required />
+        placeholder="Password (min 6 characters)"
+        minlength="6" required />
       <input type="password" id="regConfirm" placeholder="Confirm Password" required />
 
       <label for="regAvatar">Choose Your Avatar</label>
@@ -79,35 +79,4 @@
   </div>
 
   <script type="module">
-    import { register } from './scripts/auth.js';
-    const form = document.getElementById('regForm');
-    const msg = document.getElementById('regMsg');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      msg.textContent = "";
-
-      const email = form.regEmail.value;
-      const pw = form.regPassword.value;
-      const confirm = form.regConfirm.value;
-      const avatar = form.regAvatar.value;
-
-      if (pw !== confirm) {
-        msg.textContent = "Passwords do not match.";
-        msg.className = "error";
-        return;
-      }
-
-      try {
-        await register(email, pw, avatar);
-        msg.textContent = "Account created! Check your email to verify.";
-        msg.className = "success";
-        form.reset();
-      } catch (err) {
-        msg.textContent = err.message;
-        msg.className = "error";
-      }
-    });
-  </script>
-</body>
-</html>
+    impo
