@@ -7,10 +7,9 @@ admin.initializeApp();
 const db = admin.firestore();
 const { Timestamp } = admin.firestore;
 
-// Use sandbox endpoint during testing
-const PAYPAL_API = 'https://api-m.sandbox.paypal.com/v2/checkout/orders';
-const PAYPAL_ID     = ATPTbd9l2TI7yQwIgTbX7LiwfTLqaJn9iYzoXbYxdw884ktPx5Fw4TW3LPtXt9cuNI_HtAEIcvWz3raJ
-const PAYPAL_SECRET = EM5cuAUTBRlkJTCiW0YY95up5kE4wFRzD9q82XJdSFS5sL6enQVT4aqJADRE6agkjmp17g4b_3Iq4579
+const PAYPAL_API    = 'https://api-m.sandbox.paypal.com/v2/checkout/orders';
+const PAYPAL_ID     = 'ATPTbd9l2TI7yQwIgTbX7LiwfTLqaJn9iYzoXbYxdw884ktPx5Fw4TW3LPtXt9cuNI_HtAEIcvWz3raJ';
+const PAYPAL_SECRET = 'EM5cuAUTBRlkJTCiW0YY95up5kE4wFRzD9q82XJdSFS5sL6enQVT4aqJADRE6agkjmp17g4b_3Iq4579';
 
 const coinbase       = new Client({ apiKey: functions.config().coinbase.key });
 const WEBHOOK_SECRET = functions.config().coinbase.webhook_secret;
@@ -42,7 +41,7 @@ exports.confirmPayPal = functions.https.onRequest(async (req, res) => {
   }
 });
 
-// 2) Create Coinbase Commerce charge
+// 2) Create Coinbase charge
 exports.createCoinbaseCharge = functions.https.onRequest(async (req, res) => {
   try {
     const { userId, packageId, tokens, price } = req.body;
