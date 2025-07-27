@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TerpzyVerse – Log In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: url('club-bg-neon.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Orbitron', sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background: rgba(0, 0, 0, 0.75);
+      padding: 2em;
+      border-radius: 12px;
+      box-shadow: 0 0 15px red, 0 0 30px purple;
+      width: 320px;
+      text-align: center;
+    }
+    .card h1 {
+      margin-bottom: 1rem;
+      font-size: 1.8em;
+    }
+    .card input {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 6px;
+    }
+    .card button {
+      background: red;
+      color: white;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+    .error { color: #ff6666; margin-top: 0.5rem; }
+    .success { color: #66ff66; margin-top: 0.5rem; }
+    a {
+      color: #66ccff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Welcome Back</h1>
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button type="submit">Log In</button>
+    </form>
+    <div id="loginMsg"></div>
+    <p style="margin-top: 1em;">
+      Don’t have an account?
+      <a href="/register.html">Register</a>
+    </p>
+  </div>
+
+  <script type="module">
+    import { login } from './scripts/login.js';
+
+    const form = document.getElementById("loginForm");
+    const msg  = document.getElementById("loginMsg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.textContent = "";
+
+      const email = form.loginEmail.value;
+      const pw = form.loginPassword.value;
+
+      try {
+        await login(email, pw);
+
+        // Redirect based on domain
+        const domain = window.location.hostname;
+
+        if (domain.includes("clubsocial.click")) {
+          window.location.href = "/lobby.html";
+        } else if (domain.includes("terpzyverse.com")) {
+          window.location.href = "/dashboard.html";
+        } else {
+          window.location.href = "/";
+        }
+
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.className = "error";
+      }
+    });
+  </script>
+</body>
+</html>
