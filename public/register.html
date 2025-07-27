@@ -1,120 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Create Account – TerpzyVerse ClubSocial</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <title>ClubSocial Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      background: black;
+      background: url('club-bg-neon.png') no-repeat center center fixed;
+      background-size: cover;
       font-family: 'Orbitron', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
     .card {
-      background: rgba(0,0,0,0.75);
-      padding: 2rem;
+      background: rgba(0,0,0,0.8);
+      padding: 2em;
       border-radius: 12px;
       box-shadow: 0 0 15px red, 0 0 30px green;
-      width: 350px;
+      width: 340px;
+      text-align: center;
     }
-    h1 { margin-bottom: 1rem; }
-    input, select, button {
+    .card h1 { margin-bottom: 1rem; }
+    .card input, .card select {
       width: 100%;
+      padding: 0.6rem;
       margin: 0.5rem 0;
-      padding: 0.75rem;
-      border-radius: 8px;
       border: none;
-      font-size: 1rem;
+      border-radius: 6px;
     }
-    button {
+    .card button {
       background: red;
       color: white;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 1rem;
+      margin-top: 1rem;
     }
-    .error { color: #ff4444; }
-    .success { color: #66ff66; }
+    .error { color: #ff6666; margin-top: 0.5rem; }
+    .success { color: #66ff66; margin-top: 0.5rem; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>Create Your Account</h1>
-    <form id="registerForm">
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <input type="password" id="confirm" placeholder="Confirm Password" required />
-      <select id="state" required>
-        <option value="">Select State</option>
-        <option value="CA">California</option>
-        <option value="TX">Texas</option>
-        <option value="NY">New York</option>
-        <option value="FL">Florida</option>
-        <!-- add more states as needed -->
+    <h1>Create Account</h1>
+    <form id="regForm">
+      <input type="email" id="regEmail" placeholder="Email" required />
+      <input type="password" id="regPassword"
+        placeholder="Password (min 8 chars, 1 uppercase, 1 number)"
+        pattern="(?=.*\\d)(?=.*[A-Z]).{8,}" required />
+      <input type="password" id="regConfirm" placeholder="Confirm Password" required />
+
+      <label for="regAvatar">Choose Your Avatar</label>
+      <select id="regAvatar" required>
+        <option value="">Select Avatar</option>
+        <option value="neon_player1.png">Avatar 1</option>
+        <option value="neon_player2.png">Avatar 2</option>
+        <option value="neon_player3.png">Avatar 3</option>
+        <option value="neon_player4.png">Avatar 4</option>
+        <option value="neon_player5.png">Avatar 5</option>
+        <option value="neon_player6.png">Avatar 6</option>
+        <option value="neon_player7.png">Avatar 7</option>
+        <option value="neon_player9.png">Avatar 9</option>
       </select>
+
       <button type="submit">Sign Up</button>
     </form>
-    <div id="message"></div>
-    <p style="margin-top: 1rem;">Already have an account? <a href="login.html" style="color: #66ccff;">Log In</a></p>
+    <div id="regMsg"></div>
+    <p style="margin-top:1em;">
+      Already have an account?
+      <a href="login.html" style="color:#66ccff;">Log in</a>
+    </p>
   </div>
 
-  <!-- Firebase SDK -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { register } from './scripts/auth.js';
+    const form = document.getElementById('regForm');
+    const msg = document.getElementById('regMsg');
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
-      authDomain: "terpzyverseclubsocial.firebaseapp.com",
-      projectId: "terpzyverseclubsocial",
-      storageBucket: "terpzyverseclubsocial.appspot.com",
-      messagingSenderId: "125077088870",
-      appId: "1:125077088870:web:91195a40d290c6bff09ba7"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const form = document.getElementById("registerForm");
-    const message = document.getElementById("message");
-
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      message.textContent = "";
-      const email = form.email.value;
-      const password = form.password.value;
-      const confirm = form.confirm.value;
-      const state = form.state.value;
+      msg.textContent = "";
 
-      if (password !== confirm) {
-        message.textContent = "Passwords do not match.";
-        message.className = "error";
+      const email = form.regEmail.value;
+      const pw = form.regPassword.value;
+      const confirm = form.regConfirm.value;
+      const avatar = form.regAvatar.value;
+
+      if (pw !== confirm) {
+        msg.textContent = "Passwords do not match.";
+        msg.className = "error";
         return;
       }
 
       try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        const uid = userCred.user.uid;
-
-        await setDoc(doc(db, "users", uid), {
-          email: email,
-          state: state,
-          createdAt: Date.now()
-        });
-
-        message.textContent = "Account created! Redirecting...";
-        message.className = "success";
-        setTimeout(() => {
-          window.location.href = "avatar.html";
-        }, 1500);
+        await register(email, pw, avatar);
+        msg.textContent = "Account created! Check your email to verify.";
+        msg.className = "success";
+        form.reset();
       } catch (err) {
-        message.textContent = err.message;
-        message.className = "error";
+        msg.textContent = err.message;
+        msg.className = "error";
       }
     });
   </script>
