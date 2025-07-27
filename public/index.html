@@ -108,6 +108,7 @@
   <div class="buttons">
     <button id="buyBtn">BUY $TRPZ</button>
     <button id="registerBtn">REGISTER</button>
+    <button id="loginBtn">LOGIN</button>
     <button id="clubsocialBtn">CLUBSOCIAL</button>
   </div>
 
@@ -139,14 +140,16 @@
 
     // Button behavior
     document.getElementById("buyBtn").onclick = () => {
-  // Send them straight to the new store page
-  window.location.href = "/store.html";
-};
+      window.location.href = "/store.html";
+    };
     document.getElementById("registerBtn").onclick = () => {
-      location.href = "register.html";
+      window.location.href = "/register.html";
+    };
+    document.getElementById("loginBtn").onclick = () => {
+      window.location.href = "/login.html";
     };
     document.getElementById("clubsocialBtn").onclick = () => {
-      location.href = "https://clubsocial.click";
+      window.location.href = "https://clubsocial.click";
     };
   </script>
 </body>
