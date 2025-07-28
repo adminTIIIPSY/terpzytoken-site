@@ -8,8 +8,8 @@ const db = admin.firestore();
 const { Timestamp } = admin.firestore;
 
 const PAYPAL_API    = 'https://api-m.sandbox.paypal.com/v2/checkout/orders';
-const PAYPAL_ID     = 'ATPTbd9l2TI7yQwIgTbX7LiwfTLqaJn9iYzoXbYxdw884ktPx5Fw4TW3LPtXt9cuNI_HtAEIcvWz3raJ';
-const PAYPAL_SECRET = 'EM5cuAUTBRlkJTCiW0YY95up5kE4wFRzD9q82XJdSFS5sL6enQVT4aqJADRE6agkjmp17g4b_3Iq4579';
+const PAYPAL_ID     = functions.config().paypal.id;
+const PAYPAL_SECRET = functions.config().paypal.secret;
 
 const coinbase       = new Client({ apiKey: functions.config().coinbase.key });
 const WEBHOOK_SECRET = functions.config().coinbase.webhook_secret;
