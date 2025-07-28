@@ -1,8 +1,16 @@
 {
+  "functions": {
+    "source": "functions"
+  },
   "hosting": {
     "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
-      { "source": "/confirmPayPal",       "function": "confirmPayPal" },
+      { "source": "/confirmPayPal",        "function": "confirmPayPal" },
       { "source": "/createCoinbaseCharge", "function": "createCoinbaseCharge" },
       { "source": "/coinbaseWebhook",      "function": "coinbaseWebhook" }
     ]
