@@ -1,153 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TerpzyToken Presale – TerpzyVerse</title>
+  <meta charset="UTF-8">
+  <title>TerpzyVerse – $TRPZ Token</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
-    * {
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: url('assets/terpzyverse-bg.png') no-repeat center center fixed;
-      background-size: cover;
+      background: url('assets/terpzyverse-bg.png') center/cover no-repeat;
       font-family: 'Orbitron', sans-serif;
-      color: #fff;
+      color: white;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 20px;
+      justify-content: space-between;
       text-align: center;
     }
 
     header {
       margin-top: 20px;
+      font-size: 2rem;
+      text-shadow: 0 0 10px #ff0055, 0 0 20px purple;
     }
 
-    h1 {
-      font-size: 2.8em;
-      text-shadow: 0 0 10px red, 0 0 20px purple;
+    .gif-container {
+      margin-top: 30px;
     }
 
-    .token-display {
-      margin: 30px auto;
-      max-width: 320px;
-      width: 100%;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 0 20px red;
+    .gif-container img {
+      width: 180px;
+      height: 180px;
     }
 
-    .token-display img {
-      width: 100%;
-      height: auto;
-      display: block;
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
     }
 
-    .presale-info {
-      margin: 20px auto;
-      max-width: 600px;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px #ff0055;
-    }
-
-    .presale-info h2 {
-      color: #ff4b8b;
-      margin-bottom: 10px;
-    }
-
-    .presale-info p {
-      margin-bottom: 10px;
-    }
-
-    .buy-button {
-      background: linear-gradient(45deg, red, purple);
+    .button {
+      background: #ff0055;
       color: white;
-      font-size: 1.2em;
-      border: none;
-      padding: 12px 24px;
+      text-decoration: none;
+      padding: 15px 30px;
       border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 0 10px red;
-      transition: transform 0.2s ease;
+      font-size: 18px;
+      box-shadow: 0 0 10px #ff0055;
+      transition: 0.3s ease;
     }
 
-    .buy-button:hover {
-      transform: scale(1.05);
+    .button:hover {
+      background: #ff3388;
+      box-shadow: 0 0 20px #ff3388;
     }
 
     .countdown {
-      margin-top: 30px;
-      font-size: 1.4em;
-      color: #fff;
-      text-shadow: 0 0 8px red;
+      font-size: 1.8rem;
+      margin: 40px 0;
+      text-shadow: 0 0 10px red, 0 0 30px purple;
     }
 
     footer {
-      margin-top: 40px;
-      font-size: 0.9em;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      font-size: 14px;
       color: #ccc;
-      text-shadow: 0 0 5px black;
     }
   </style>
 </head>
 <body>
+  <header>Welcome to TerpzyVerse</header>
 
-  <header>
-    <h1>🔥 TerpzyToken Presale 🔥</h1>
-  </header>
-
-  <div class="token-display">
-    <img src="assets/terpzytoken-spin.gif" alt="Spinning TerpzyToken" />
-  </div>
-
-  <div class="presale-info">
-    <h2>$1 per TRPZ — Limited to 250,000 tokens</h2>
-    <p>Send MATIC directly to: <br><strong>0x8b67348306785692201fc328a7e954a178a42e62</strong></p>
-    <p>Then register your wallet address to receive your TRPZ upon launch.</p>
-    <button class="buy-button" onclick="navigator.clipboard.writeText('0x8b67348306785692201fc328a7e954a178a42e62').then(() => alert('Wallet address copied to clipboard!'))">BUY $TRPZ</button>
+  <div class="gif-container">
+    <img src="assets/terpzytoken-spin.gif" alt="$TRPZ Token">
   </div>
 
   <div class="countdown" id="countdown">
-    ⏳ Loading countdown...
+    Launching in...
   </div>
 
-  <footer>
-    &copy; 2025 TerpzyVerse.com — All rights reserved
-  </footer>
+  <div class="button-group">
+    <a href="register.html" class="button">Sign Up</a>
+    <a href="login.html" class="button">Log In</a>
+  </div>
+
+  <footer>© 2025 TerpzyVerse.com – All Rights Reserved</footer>
 
   <script>
-    // Countdown to 4/20/2026 at 4:20 PM Central Time (CST/CDT)
     const countdownEl = document.getElementById('countdown');
+    const launchDate = new Date("April 20, 2026 16:20:00 CDT").getTime();
 
-    function updateCountdown() {
-      // Central Time UTC offset varies with DST; use fixed UTC offset for simplicity here (UTC-5)
-      const launchDate = new Date('2026-04-20T21:20:00Z'); // 4:20pm Central = 9:20pm UTC
-      const now = new Date();
-      const diff = launchDate - now;
+    setInterval(() => {
+      const now = new Date().getTime();
+      const distance = launchDate - now;
 
-      if (diff <= 0) {
-        countdownEl.textContent = "🚀 TerpzyToken is LIVE!";
+      if (distance <= 0) {
+        countdownEl.innerHTML = "TerpzyToken is now live!";
         return;
       }
 
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      countdownEl.textContent = `⏳ Launches in ${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+      countdownEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
   </script>
-
 </body>
 </html>
