@@ -1,47 +1,38 @@
-body, html { margin:0; padding:0; height:100%; overflow:hidden; }
-body {
-  background: url('/assets/terpzyverse-bg.png') center/cover no-repeat;
+/* Neon Background + Overlay */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
   font-family: 'Orbitron', sans-serif;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.container {
-  position: relative;
-  max-width: 1000px;
-  text-align: center;
-  padding: 2rem;
-  flex-grow: 1;
-}
-.hero .coin {
-  width: 150px;
-  height: 150px;
-  animation: spin 2s linear infinite;
-}
-@keyframes spin { 100% { transform: rotate(360deg); } }
-.buttons {
-  position: absolute;
-  bottom: 2rem;
-  left: 2rem;
-  display: flex;
-  gap: 1rem;
-}
-button {
-  font-size: 1.25rem;
-  padding: 0.75rem 1.5rem;
-  background: #f33;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  background: url('../assets/terpzyverse-bg.png') center/cover no-repeat fixed;
   color: white;
-}
-.countdown {
-  font-size: 1.5rem;
-  margin-top: 2rem;
-}
-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  padding: 1rem;
-  background: rgba(0,0,0,0.5);
 }
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px red;
+  max-width: 95vw;
+  width: 400px;
+}
+
+/* Neon Text + Glow */
+h1, h2 {
+  text-shadow: 0 0 10px red, 0 0 20px purple;
+}
+
+.highlight {
+  color: #00ffcc;
+  text-shadow: 0 0 8px #00ffcc;
+}
+
+/* Token Image */
+.token-img {
+  width: 150px;
+  margin: 20px auto;
+  animation: float 2s ease-in-out infinite
