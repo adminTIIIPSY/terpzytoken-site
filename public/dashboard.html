@@ -2,148 +2,156 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TerpzyVerse Dashboard</title>
+  <title>ClubSocial Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
+      background: url('club-bg-neon.png') no-repeat center center fixed;
+      background-size: cover;
       font-family: 'Orbitron', sans-serif;
-      background: url('/terpzyverse-bg.png') center/cover no-repeat fixed;
       color: white;
+    }
+    header {
+      background: rgba(0,0,0,0.9);
+      padding: 1em;
+      text-align: center;
+      font-size: 1.5em;
+      box-shadow: 0 0 10px red;
+    }
+    .container {
+      padding: 2em;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 60px;
+      gap: 2em;
+    }
+    .card {
+      background: rgba(0,0,0,0.85);
+      padding: 1.5em;
+      border-radius: 12px;
+      box-shadow: 0 0 15px green;
+      max-width: 500px;
+      width: 90%;
       text-align: center;
     }
-
-    .avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      box-shadow: 0 0 15px red;
-      margin-bottom: 10px;
-    }
-
-    .username {
-      font-size: 1.5em;
-      text-shadow: 0 0 10px green;
-    }
-
-    .wallet {
-      background: rgba(0,0,0,0.6);
-      border: 1px solid #ff0044;
-      padding: 1em;
-      margin-top: 1em;
-      border-radius: 12px;
-      box-shadow: 0 0 12px red;
-    }
-
-    .wallet p {
+    .wallet span {
+      display: block;
       margin: 0.5em 0;
       font-size: 1.2em;
     }
-
-    .buttons {
-      margin-top: 30px;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
+    .avatar-img {
+      width: 100px;
+      border-radius: 50%;
+      margin: 1em auto;
+      display: block;
     }
-
-    .buttons a {
-      text-decoration: none;
+    button {
       background: red;
       color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px green;
+      padding: 0.6em 1.2em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 1em;
       font-size: 1em;
-      transition: 0.3s;
-    }
-
-    .buttons a:hover {
-      background: #ff0044;
-      box-shadow: 0 0 20px white;
-    }
-
-    .footer {
-      margin-top: 40px;
-      font-size: 0.8em;
-      color: #aaa;
     }
   </style>
 </head>
 <body>
+  <header>Welcome to ClubSocial</header>
+  <div class="container">
+    <div class="card" id="setupCard">
+      <h2>Choose Your Username & Avatar</h2>
+      <input type="text" id="username" placeholder="Pick a username" required />
+      <div>
+        <label for="avatarSelect">Select Avatar:</label>
+        <select id="avatarSelect">
+          <option value="neon_player1.png">Avatar 1</option>
+          <option value="neon_player2.png">Avatar 2</option>
+          <option value="neon_player3.png">Avatar 3</option>
+          <option value="neon_player4.png">Avatar 4</option>
+          <option value="neon_player5.png">Avatar 5</option>
+          <option value="neon_player6.png">Avatar 6</option>
+          <option value="neon_player7.png">Avatar 7</option>
+          <option value="neon_player9.png">Avatar 9</option>
+        </select>
+      </div>
+      <button onclick="saveProfile()">Save & Continue</button>
+      <div id="setupMsg"></div>
+    </div>
 
-  <img id="userAvatar" class="avatar" src="/avatars/neon_player1.png" alt="Avatar">
-  <div class="username" id="userName">Loading...</div>
-
-  <div class="wallet">
-    <p>💰 Gold Coins: <span id="gc">0</span></p>
-    <p>💎 Sweeps Coins: <span id="sc">0</span></p>
+    <div class="card" id="walletCard" style="display:none;">
+      <h2>Your Wallet</h2>
+      <img src="" alt="Avatar" id="walletAvatar" class="avatar-img" />
+      <h3 id="walletUsername"></h3>
+      <div class="wallet">
+        <span>Gold Coins: <b id="walletGold">0</b></span>
+        <span>Sweeps Coins: <b id="walletSweeps">0</b></span>
+        <span>$TRPZ: <b id="walletTRPZ">0</b></span>
+      </div>
+      <button onclick="location.href='store.html'">Go to Store</button>
+    </div>
   </div>
-
-  <div class="buttons">
-    <a href="https://clubsocial.click/lobby/lobby.html" target="_blank">🎰 Go to ClubSocial</a>
-    <a href="/profile.html">👤 Profile</a>
-    <a href="#" id="logoutBtn">🚪 Logout</a>
-  </div>
-
-  <div class="footer">© 2025 TerpzyVerse. All rights reserved.</div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
-      authDomain: "terpzyverseclubsocial.firebaseapp.com",
-      projectId: "terpzyverseclubsocial",
-      storageBucket: "terpzyverseclubsocial.appspot.com",
-      messagingSenderId: "125077088870",
-      appId: "1:125077088870:web:91195a40d290c6bff09ba7"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const userName = document.getElementById('userName');
-    const userAvatar = document.getElementById('userAvatar');
-    const gcEl = document.getElementById('gc');
-    const scEl = document.getElementById('sc');
-    const logoutBtn = document.getElementById('logoutBtn');
-
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = '/login.html';
-        return;
-      }
+      if (!user) return location.href = 'login.html';
 
-      const uid = user.uid;
-      const docRef = doc(db, "users", uid);
-      const docSnap = await getDoc(docRef);
+      const ref = doc(db, 'users', user.uid);
+      const snap = await getDoc(ref);
 
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        userName.textContent = data.username || user.email;
-        gcEl.textContent = data.gc || 0;
-        scEl.textContent = data.sc || 0;
-        if (data.avatar && data.avatar !== "neon_player8.png") {
-          userAvatar.src = `/avatars/${data.avatar}`;
+      if (snap.exists()) {
+        const data = snap.data();
+
+        if (!data.username || !data.avatar) {
+          document.getElementById('setupCard').style.display = 'block';
+        } else {
+          document.getElementById('walletCard').style.display = 'block';
+          document.getElementById('walletUsername').textContent = data.username;
+          document.getElementById('walletAvatar').src = `assets/${data.avatar}`;
+          document.getElementById('walletGold').textContent = data.wallet?.gold ?? 0;
+          document.getElementById('walletSweeps').textContent = data.wallet?.sweeps ?? 0;
+          document.getElementById('walletTRPZ').textContent = data.wallet?.trpz ?? 0;
         }
-      } else {
-        userName.textContent = user.email;
       }
     });
 
-    logoutBtn.addEventListener('click', async () => {
-      await signOut(auth);
-      window.location.href = '/login.html';
-    });
+    async function saveProfile() {
+      const username = document.getElementById('username').value;
+      const avatar = document.getElementById('avatarSelect').value;
+      const user = auth.currentUser;
+      if (!username || !avatar) return;
+
+      const ref = doc(db, 'users', user.uid);
+      await updateDoc(ref, { username, avatar });
+      location.reload();
+    }
   </script>
 </body>
 </html>
