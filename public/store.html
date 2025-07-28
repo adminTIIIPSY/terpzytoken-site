@@ -1,13 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Buy TRPZ</title>
-  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #000;
+      font-family: 'Orbitron', sans-serif;
+      color: white;
+      text-align: center;
+      padding-top: 100px;
+    }
+    button {
+      font-size: 20px;
+      padding: 15px 30px;
+      background: red;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 0 15px red;
+      color: white;
+      cursor: pointer;
+      margin: 10px;
+    }
+    #modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      justify-content: center;
+      align-items: center;
+      z-index: 99;
+    }
+    .modal-content {
+      background: #111;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px red;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Buy TerpzyTokens ($TRPZ)</h1>
+  <button onclick="openModal()">Buy</button>
+
+  <!-- Modal -->
+  <div id="modal">
+    <div class="modal-content">
+      <h2>Choose Payment Method</h2>
+      <button onclick="buyCoinbase()">Coinbase</button>
+      <button onclick="buyPayPal()">PayPal</button>
+      <br><br>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
     const firebaseConfig = {
   apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
@@ -18,64 +70,50 @@
   appId: "1:125077088870:web:91195a40d290c6bff09ba7"
     };
 
-    initializeApp(firebaseConfig);
-    const auth = getAuth();
-    const db = getFirestore();
-
-    const PACKAGES = [
-      { id: "mini",    name: "Mini Pack",    tokens: 10, price: 10 },
-      { id: "newb",    name: "Newb Pack",    tokens: 20, price: 20 },
-      { id: "starter", name: "Starter Pack", tokens: 100, price: 90 },
-      { id: "gamer",   name: "Gamer Pack",   tokens: 500, price: 475 },
-      { id: "whale",   name: "Whale Pack",   tokens: 1200, price: 1150 },
-    ];
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    let userEmail = '';
 
     onAuthStateChanged(auth, user => {
-      if (!user) return window.location.href = "/login.html";
-      renderStore(user.uid);
+      if (user) userEmail = user.email;
     });
 
-    function renderStore(uid) {
-      const container = document.getElementById("packages");
-      PACKAGES.forEach(pkg => {
-        const div = document.createElement("div");
-        div.innerHTML = `
-          <h2>${pkg.name}</h2>
-          <p>${pkg.tokens} TRPZ — $${pkg.price}</p>
-          <div id="paypal-${pkg.id}"></div>
-          <button id="crypto-${pkg.id}">Pay with Crypto</button>
-        `;
-        container.appendChild(div);
+    function openModal() {
+      document.getElementById('modal').style.display = 'flex';
+    }
 
-        paypal.Buttons({
-          createOrder: (_, actions) =>
-            actions.order.create({ purchase_units: [{ amount: { value: pkg.price.toFixed(2) } }] }),
-          onApprove: (_, actions) =>
-            actions.order.capture().then(() =>
-              fetch("/confirmPayPal", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ orderID: _.orderID, userId: uid, packageId: pkg.id, tokens: pkg.tokens })
-              })
-            )
-        }).render(`#paypal-${pkg.id}`);
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
 
-        document.getElementById(`crypto-${pkg.id}`)
-          .addEventListener("click", () => {
-            fetch("/createCoinbaseCharge", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ userId: uid, packageId: pkg.id, tokens: pkg.tokens, price: pkg.price })
-            })
-            .then(r => r.json())
-            .then(data => window.location.href = data.hosted_url);
-          });
-      });
+    async function buyCoinbase() {
+      try {
+        const res = await fetch("https://us-central1-terpzyverseclubsocial.cloudfunctions.net/createCoinbaseCharge", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: userEmail })
+        });
+        const data = await res.json();
+        window.location.href = data.hosted_url || "/";
+      } catch (err) {
+        alert("Coinbase failed: " + err.message);
+      }
+    }
+
+    async function buyPayPal() {
+      try {
+        const res = await fetch("https://us-central1-terpzyverseclubsocial.cloudfunctions.net/confirmPayPal", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: userEmail })
+        });
+        const data = await res.json();
+        alert("PayPal confirmed: " + JSON.stringify(data));
+      } catch (err) {
+        alert("PayPal failed: " + err.message);
+      }
     }
   </script>
-</head>
-<body>
-  <h1>Buy TRPZ Tokens</h1>
-  <div id="packages"></div>
+
 </body>
 </html>
