@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ClubSocial Sign Up</title>
+  <title>Register – ClubSocial</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
     body {
@@ -17,18 +17,17 @@
       height: 100vh;
     }
     .card {
-      background: rgba(0,0,0,0.8);
+      background: rgba(0, 0, 0, 0.85);
       padding: 2em;
       border-radius: 12px;
       box-shadow: 0 0 15px red, 0 0 30px green;
-      width: 340px;
+      width: 350px;
       text-align: center;
     }
-    .card h1 { margin-bottom: 1rem; }
-    .card input, .card select {
+    .card input {
       width: 100%;
       padding: 0.6rem;
-      margin: 0.5rem 0;
+      margin: 0.4rem 0;
       border: none;
       border-radius: 6px;
     }
@@ -42,41 +41,96 @@
       font-size: 1rem;
       margin-top: 1rem;
     }
-    .error { color: #ff6666; margin-top: 0.5rem; }
-    .success { color: #66ff66; margin-top: 0.5rem; }
+    .card a {
+      color: #66ccff;
+      text-decoration: none;
+    }
+    .status {
+      margin-top: 0.5rem;
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>Create Account</h1>
-    <form id="regForm">
-      <input type="email" id="regEmail" placeholder="Email" required />
-      <input type="password" id="regPassword"
-        placeholder="Password (min 6 characters)"
-        minlength="6" required />
-      <input type="password" id="regConfirm" placeholder="Confirm Password" required />
-
-      <label for="regAvatar">Choose Your Avatar</label>
-      <select id="regAvatar" required>
-        <option value="">Select Avatar</option>
-        <option value="neon_player1.png">Avatar 1</option>
-        <option value="neon_player2.png">Avatar 2</option>
-        <option value="neon_player3.png">Avatar 3</option>
-        <option value="neon_player4.png">Avatar 4</option>
-        <option value="neon_player5.png">Avatar 5</option>
-        <option value="neon_player6.png">Avatar 6</option>
-        <option value="neon_player7.png">Avatar 7</option>
-        <option value="neon_player9.png">Avatar 9</option>
-      </select>
-
-      <button type="submit">Sign Up</button>
+    <h2>Join ClubSocial</h2>
+    <form id="registerForm">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="text" id="address" placeholder="Address" required />
+      <input type="date" id="birthday" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password (min 6 chars)" required />
+      <button type="submit">Register</button>
     </form>
-    <div id="regMsg"></div>
-    <p style="margin-top:1em;">
-      Already have an account?
-      <a href="login.html" style="color:#66ccff;">Log in</a>
-    </p>
+    <div id="status" class="status"></div>
+    <p style="margin-top: 1em;">Already registered? <a href="login.html">Log In</a></p>
   </div>
 
   <script type="module">
-    impo
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      sendEmailVerification
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const form = document.getElementById('registerForm');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const address = document.getElementById('address').value;
+      const birthday = document.getElementById('birthday').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCred.user;
+
+        await sendEmailVerification(user);
+
+        await setDoc(doc(db, "users", user.uid), {
+          name,
+          address,
+          birthday,
+          email,
+          uid: user.uid,
+          verified: false,
+          avatar: "",
+          username: "",
+          wallet: {
+            gold: 0,
+            sweeps: 0,
+            trpz: 0
+          }
+        });
+
+        status.innerHTML = "✅ Check your email to verify your account!";
+        form.reset();
+      } catch (error) {
+        status.innerHTML = `<span style="color:red;">${error.message}</span>`;
+      }
+    });
+  </script>
+</body>
+</html>
