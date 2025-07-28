@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ClubSocial Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -11,107 +11,80 @@
       background-size: cover;
       font-family: 'Orbitron', sans-serif;
       color: white;
-    }
-    header {
-      background: rgba(0,0,0,0.9);
-      padding: 1em;
       text-align: center;
-      font-size: 1.5em;
-      box-shadow: 0 0 10px red;
-    }
-    .container {
-      padding: 2em;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2em;
+      padding-top: 2em;
     }
     .card {
-      background: rgba(0,0,0,0.85);
-      padding: 1.5em;
-      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.85);
+      border-radius: 16px;
+      display: inline-block;
+      padding: 2em;
+      box-shadow: 0 0 15px red, 0 0 25px purple;
+    }
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-top: 1em;
       box-shadow: 0 0 15px green;
-      max-width: 500px;
-      width: 90%;
-      text-align: center;
+    }
+    .wallet {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1em 2em;
+      border-radius: 12px;
+      margin-top: 1.5em;
+      box-shadow: 0 0 12px green;
     }
     .wallet span {
       display: block;
       margin: 0.5em 0;
       font-size: 1.2em;
     }
-    .avatar-img {
-      width: 100px;
-      border-radius: 50%;
-      margin: 1em auto;
-      display: block;
+    .buttons {
+      margin-top: 2em;
     }
-    button {
+    .buttons button {
+      margin: 0.5em;
+      padding: 0.8em 1.5em;
+      font-size: 1em;
       background: red;
       color: white;
-      padding: 0.6em 1.2em;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      margin-top: 1em;
-      font-size: 1em;
+      box-shadow: 0 0 10px red;
     }
   </style>
 </head>
 <body>
-  <header>Welcome to ClubSocial</header>
-  <div class="container">
-    <div class="card" id="setupCard">
-      <h2>Choose Your Username & Avatar</h2>
-      <input type="text" id="username" placeholder="Pick a username" required />
-      <div>
-        <label for="avatarSelect">Select Avatar:</label>
-        <select id="avatarSelect">
-          <option value="neon_player1.png">Avatar 1</option>
-          <option value="neon_player2.png">Avatar 2</option>
-          <option value="neon_player3.png">Avatar 3</option>
-          <option value="neon_player4.png">Avatar 4</option>
-          <option value="neon_player5.png">Avatar 5</option>
-          <option value="neon_player6.png">Avatar 6</option>
-          <option value="neon_player7.png">Avatar 7</option>
-          <option value="neon_player9.png">Avatar 9</option>
-        </select>
-      </div>
-      <button onclick="saveProfile()">Save & Continue</button>
-      <div id="setupMsg"></div>
+  <div class="card">
+    <h1>Welcome, <span id="username">Loading...</span></h1>
+    <img id="avatar" class="avatar" src="" alt="Avatar" />
+    <div class="wallet">
+      <h2>VaultNova Wallet</h2>
+      <span>GC: <strong id="gcBalance">–</strong></span>
+      <span>SC: <strong id="scBalance">–</strong></span>
+      <span>$TRPZ: <strong id="trpzBalance">–</strong></span>
     </div>
-
-    <div class="card" id="walletCard" style="display:none;">
-      <h2>Your Wallet</h2>
-      <img src="" alt="Avatar" id="walletAvatar" class="avatar-img" />
-      <h3 id="walletUsername"></h3>
-      <div class="wallet">
-        <span>Gold Coins: <b id="walletGold">0</b></span>
-        <span>Sweeps Coins: <b id="walletSweeps">0</b></span>
-        <span>$TRPZ: <b id="walletTRPZ">0</b></span>
-      </div>
-      <button onclick="location.href='store.html'">Go to Store</button>
+    <div class="buttons">
+      <button onclick="location.href='store.html'">Open Store</button>
+      <button onclick="location.href='profile.html'">Edit Profile</button>
+      <button onclick="location.href='transfer.html'">Transfer $TRPZ</button>
+      <button onclick="location.href='logout.html'">Log Out</button>
     </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      updateDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT",
-      storageBucket: "YOUR_PROJECT.appspot.com",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_BUCKET",
       messagingSenderId: "YOUR_SENDER_ID",
       appId: "YOUR_APP_ID"
     };
@@ -121,37 +94,24 @@
     const db = getFirestore(app);
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user) return location.href = 'login.html';
-
-      const ref = doc(db, 'users', user.uid);
-      const snap = await getDoc(ref);
-
-      if (snap.exists()) {
-        const data = snap.data();
-
-        if (!data.username || !data.avatar) {
-          document.getElementById('setupCard').style.display = 'block';
+      if (user) {
+        const uid = user.uid;
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById("username").textContent = data.username || "No Username";
+          document.getElementById("avatar").src = `assets/avatars/${data.avatar}`;
+          document.getElementById("gcBalance").textContent = data.wallet?.gc ?? 0;
+          document.getElementById("scBalance").textContent = data.wallet?.sc ?? 0;
+          document.getElementById("trpzBalance").textContent = data.wallet?.trpz ?? 0;
         } else {
-          document.getElementById('walletCard').style.display = 'block';
-          document.getElementById('walletUsername').textContent = data.username;
-          document.getElementById('walletAvatar').src = `assets/${data.avatar}`;
-          document.getElementById('walletGold').textContent = data.wallet?.gold ?? 0;
-          document.getElementById('walletSweeps').textContent = data.wallet?.sweeps ?? 0;
-          document.getElementById('walletTRPZ').textContent = data.wallet?.trpz ?? 0;
+          document.getElementById("username").textContent = "User data not found";
         }
+      } else {
+        window.location.href = "login.html";
       }
     });
-
-    async function saveProfile() {
-      const username = document.getElementById('username').value;
-      const avatar = document.getElementById('avatarSelect').value;
-      const user = auth.currentUser;
-      if (!username || !avatar) return;
-
-      const ref = doc(db, 'users', user.uid);
-      await updateDoc(ref, { username, avatar });
-      location.reload();
-    }
   </script>
 </body>
 </html>
