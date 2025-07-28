@@ -1,17 +1,19 @@
 const functions = require('firebase-functions');
-const admin     = require('firebase-admin');
-const fetch     = require('node-fetch');
-const { Client, Webhook } = require('coinbase-commerce-node');
+const admin = require('firebase-admin');
+const fetch = require('node-fetch');
+const coinbase = require('coinbase-commerce-node');
+const { resources, Webhook } = coinbase;
+const { Charge } = resources;
 
 admin.initializeApp();
 const db = admin.firestore();
 const { Timestamp } = admin.firestore;
 
-const PAYPAL_API    = 'https://api-m.sandbox.paypal.com/v2/checkout/orders';
-const PAYPAL_ID     = functions.config().paypal.id;
-const PAYPAL_SECRET = functions.config().paypal.secret;
+const PAYPAL_API = 'https://api-m.sandbox.paypal.com/v2/checkout/orders';
+const PAYPAL_ID = 'ATPTbd9l2TI7yQwIgTbX7LiwfTLqaJn9iYzoXbYxdw884ktPx5Fw4TW3LPtXt9cuNI_HtAEIcvWz3raJ';
+const PAYPAL_SECRET = 'EM5cuAUTBRlkJTCiW0YY95up5kE4wFRzD9q82XJdSFS5sL6enQVT4aqJADRE6agkjmp17g4b_3Iq4579';
 
-const coinbase       = new Client({ apiKey: functions.config().coinbase.key });
+coinbase.Client.init(functions.config().coinbase.key);
 const WEBHOOK_SECRET = functions.config().coinbase.webhook_secret;
 
 // 1) Confirm PayPal purchase
@@ -52,7 +54,7 @@ exports.createCoinbaseCharge = functions.https.onRequest(async (req, res) => {
       pricing_type: 'fixed_price',
       metadata: { userId, packageId, tokens }
     };
-    const charge = await coinbase.charge.create(chargeData);
+    const charge = await Charge.create(chargeData);
     await db.collection('purchases').add({
       userId, packageId, tokens,
       currency: 'USD', method: 'coinbase',
