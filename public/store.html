@@ -1,49 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Buy TRPZ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background: #000;
-      font-family: 'Orbitron', sans-serif;
-      color: white;
-      text-align: center;
-      padding-top: 100px;
-    }
-    button {
-      font-size: 20px;
-      padding: 15px 30px;
-      background: red;
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 0 15px red;
-      color: white;
-      cursor: pointer;
-      margin: 10px;
-    }
-    #modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.9);
-      color: white;
-      justify-content: center;
-      align-items: center;
-      z-index: 99;
-    }
-    .modal-content {
-      background: #111;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px red;
-    }
-  </style>
-</head>
 <body>
 
   <h1>Buy TerpzyTokens ($TRPZ)</h1>
+
+  <label for="packageSelect">Select Package:</label>
+  <select id="packageSelect">
+    <option value="25">25 $TRPZ – $25</option>
+    <option value="50">50 $TRPZ – $50</option>
+    <option value="100">100 $TRPZ – $100</option>
+    <option value="250">250 $TRPZ – $250</option>
+  </select>
+
+  <br><br>
   <button onclick="openModal()">Buy</button>
 
   <!-- Modal -->
@@ -62,12 +29,12 @@
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
     const firebaseConfig = {
-  apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
-  authDomain: "terpzyverseclubsocial.firebaseapp.com",
-  projectId: "terpzyverseclubsocial",
-  storageBucket: "terpzyverseclubsocial.firebasestorage.app",
-  messagingSenderId: "125077088870",
-  appId: "1:125077088870:web:91195a40d290c6bff09ba7"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "terpzyverseclubsocial.firebaseapp.com",
+      projectId: "terpzyverseclubsocial",
+      storageBucket: "terpzyverseclubsocial.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -87,11 +54,12 @@
     }
 
     async function buyCoinbase() {
+      const amount = document.getElementById('packageSelect').value;
       try {
         const res = await fetch("https://us-central1-terpzyverseclubsocial.cloudfunctions.net/createCoinbaseCharge", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: userEmail })
+          body: JSON.stringify({ email: userEmail, amount })
         });
         const data = await res.json();
         window.location.href = data.hosted_url || "/";
@@ -101,11 +69,12 @@
     }
 
     async function buyPayPal() {
+      const amount = document.getElementById('packageSelect').value;
       try {
         const res = await fetch("https://us-central1-terpzyverseclubsocial.cloudfunctions.net/confirmPayPal", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: userEmail })
+          body: JSON.stringify({ email: userEmail, amount })
         });
         const data = await res.json();
         alert("PayPal confirmed: " + JSON.stringify(data));
@@ -116,4 +85,3 @@
   </script>
 
 </body>
-</html>
