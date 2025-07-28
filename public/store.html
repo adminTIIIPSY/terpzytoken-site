@@ -2,50 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TerpzyVerse Pre‑Sale Store</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
-  <!-- Your main CSS -->
-  <link rel="stylesheet" href="/css/main.css">
-
-  <!-- Firebase App + Auth + Firestore Init -->
+  <title>Buy TRPZ</title>
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID"></script>
   <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js';
-    import { getAuth }       from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js';
-    import { getFirestore }  from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyB-57VtukbNwVr70ko3ZTIaEfx5DF6KNI4",
-      authDomain: "terpzyverse-417bd.firebaseapp.com",
-      projectId: "terpzyverse-417bd",
-      storageBucket: "terpzyverse-417bd.firebasestorage.app",
-      messagingSenderId: "672502191747",
-      appId: "1:672502191747:web:040fec9ad1bdd6dd442db6"
+  apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
+  authDomain: "terpzyverseclubsocial.firebaseapp.com",
+  projectId: "terpzyverseclubsocial",
+  storageBucket: "terpzyverseclubsocial.firebasestorage.app",
+  messagingSenderId: "125077088870",
+  appId: "1:125077088870:web:91195a40d290c6bff09ba7"
     };
 
-    const app  = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db   = getFirestore(app);
+    initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
 
-    // Expose globally for store.js
-    window.firebaseAuth = auth;
-    window.firebaseDb   = db;
+    const PACKAGES = [
+      { id: "mini",    name: "Mini Pack",    tokens: 10, price: 10 },
+      { id: "newb",    name: "Newb Pack",    tokens: 20, price: 20 },
+      { id: "starter", name: "Starter Pack", tokens: 100, price: 90 },
+      { id: "gamer",   name: "Gamer Pack",   tokens: 500, price: 475 },
+      { id: "whale",   name: "Whale Pack",   tokens: 1200, price: 1150 },
+    ];
+
+    onAuthStateChanged(auth, user => {
+      if (!user) return window.location.href = "/login.html";
+      renderStore(user.uid);
+    });
+
+    function renderStore(uid) {
+      const container = document.getElementById("packages");
+      PACKAGES.forEach(pkg => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <h2>${pkg.name}</h2>
+          <p>${pkg.tokens} TRPZ — $${pkg.price}</p>
+          <div id="paypal-${pkg.id}"></div>
+          <button id="crypto-${pkg.id}">Pay with Crypto</button>
+        `;
+        container.appendChild(div);
+
+        paypal.Buttons({
+          createOrder: (_, actions) =>
+            actions.order.create({ purchase_units: [{ amount: { value: pkg.price.toFixed(2) } }] }),
+          onApprove: (_, actions) =>
+            actions.order.capture().then(() =>
+              fetch("/confirmPayPal", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderID: _.orderID, userId: uid, packageId: pkg.id, tokens: pkg.tokens })
+              })
+            )
+        }).render(`#paypal-${pkg.id}`);
+
+        document.getElementById(`crypto-${pkg.id}`)
+          .addEventListener("click", () => {
+            fetch("/createCoinbaseCharge", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ userId: uid, packageId: pkg.id, tokens: pkg.tokens, price: pkg.price })
+            })
+            .then(r => r.json())
+            .then(data => window.location.href = data.hosted_url);
+          });
+      });
+    }
   </script>
-
-  <!-- PayPal SDK (swap in your real Client ID) -->
-  <script src="https://www.paypal.com/sdk/js?client-id=ATPTbd9l2TI7yQwIgTbX7LiwfTLqaJn9iYzoXbYxdw884ktPx5Fw4TW3LPtXt9cuNI_HtAEIcvWz3raJ&currency=USD"></script>
-  <!-- Coinbase Commerce -->
-  <script src="https://commerce.coinbase.com/v1/checkout.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>TerpzyVerse Store (Pre‑Sale)</h1>
-    <div id="packages"></div>
-  </div>
-
-  <footer>© 2025 TerpzyVerse.com. All rights reserved.</footer>
-
-  <!-- Your store logic -->
-  <script type="module" src="/js/store.js"></script>
+  <h1>Buy TRPZ Tokens</h1>
+  <div id="packages"></div>
 </body>
 </html>
