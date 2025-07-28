@@ -1,146 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Buy TerpzyTokens</title>
+  <meta charset="UTF-8">
+  <title>Buy $TRPZ – TerpzyToken Packages</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
+      margin: 0;
       background: #000;
       color: #fff;
       font-family: 'Orbitron', sans-serif;
-      text-align: center;
-      padding-top: 50px;
+      background-image: url('assets/terpzyverse-bg.png');
+      background-size: cover;
+      background-position: center;
     }
 
-    #modal {
+    h1 {
+      text-align: center;
+      padding: 20px;
+      font-size: 2em;
+      text-shadow: 0 0 10px red, 0 0 20px purple;
+    }
+
+    .packages {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .package {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid red;
+      border-radius: 15px;
+      padding: 20px;
+      width: 250px;
+      text-align: center;
+      box-shadow: 0 0 20px purple;
+    }
+
+    .package h2 {
+      margin: 0 0 10px;
+    }
+
+    .package p {
+      margin: 0 0 15px;
+    }
+
+    .buy-btn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px red;
+    }
+
+    .modal {
       display: none;
       position: fixed;
-      z-index: 10;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
+      z-index: 99;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
       justify-content: center;
       align-items: center;
+      flex-direction: column;
     }
 
-    .modal-content {
+    .modal-box {
       background: #111;
-      padding: 40px;
-      border-radius: 10px;
+      border: 2px solid red;
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
       box-shadow: 0 0 20px red;
     }
 
-    button {
-      background: red;
-      color: white;
-      padding: 10px 25px;
-      font-size: 16px;
+    .modal-box button {
       margin: 10px;
-      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
       border-radius: 8px;
       cursor: pointer;
     }
 
-    select {
-      padding: 10px;
-      font-size: 18px;
-      border-radius: 8px;
+    .paypal-btn {
+      background: #0070ba;
+      color: white;
+    }
+
+    .coinbase-btn {
+      background: #1652f0;
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .package {
+        width: 90%;
+      }
     }
   </style>
 </head>
 <body>
-
-  <h1>Buy TerpzyTokens ($TRPZ)</h1>
-
-  <label for="packageSelect">Select Package:</label><br><br>
-  <select id="packageSelect">
-    <option value="25">25 $TRPZ – $25</option>
-    <option value="50">50 $TRPZ – $50</option>
-    <option value="100">100 $TRPZ – $100</option>
-    <option value="250">250 $TRPZ – $250</option>
-  </select>
-
-  <br><br>
-  <button onclick="openModal()">Buy</button>
+  <h1>Select Your $TRPZ Package</h1>
+  <div class="packages">
+    <!-- Package options -->
+    <div class="package" data-amount="1" data-price="1.49"> <h2>1 $TRPZ</h2><p>$1.49</p><button class="buy-btn">BUY</button></div>
+    <div class="package" data-amount="5" data-price="5.99"> <h2>5 $TRPZ</h2><p>$5.99</p><button class="buy-btn">BUY</button></div>
+    <div class="package" data-amount="10" data-price="11.49"><h2>10 $TRPZ</h2><p>$11.49</p><button class="buy-btn">BUY</button></div>
+    <div class="package" data-amount="20" data-price="21.99"><h2>20 $TRPZ</h2><p>$21.99</p><button class="buy-btn">BUY</button></div>
+    <div class="package" data-amount="50" data-price="50"><h2>50 $TRPZ</h2><p>$50 (Bronze NFT)</p><button class="buy-btn">BUY</button></div>
+    <div class="package" data-amount="100" data-price="100"><h2>100 $TRPZ</h2><p>$100 (Silver NFT)</p><button class="buy-btn">BUY</button></div>
+    <div class="package" data-amount="500" data-price="500"><h2>500 $TRPZ</h2><p>$500 (Gold NFT)</p><button class="buy-btn">BUY</button></div>
+    <div class="package" data-amount="1000" data-price="1000"><h2>1000 $TRPZ</h2><p>$1000 (Platinum NFT)</p><button class="buy-btn">BUY</button></div>
+    <div class="package" data-amount="2500" data-price="2500"><h2>2500 $TRPZ</h2><p>$2500 (Emerald NFT)</p><button class="buy-btn">BUY</button></div>
+    <div class="package" data-amount="5000" data-price="5000"><h2>5000 $TRPZ</h2><p>$5000 (Ruby NFT)</p><button class="buy-btn">BUY</button></div>
+    <div class="package" data-amount="10000" data-price="10000"><h2>10000 $TRPZ</h2><p>$10000 (Diamond NFT)</p><button class="buy-btn">BUY</button></div>
+  </div>
 
   <!-- Modal -->
-  <div id="modal">
-    <div class="modal-content">
+  <div class="modal" id="modal">
+    <div class="modal-box">
       <h2>Choose Payment Method</h2>
-      <button onclick="buyCoinbase()">Coinbase</button>
-      <button onclick="buyPayPal()">PayPal</button>
-      <br><br>
-      <button onclick="closeModal()">Cancel</button>
+      <button class="paypal-btn" id="payWithPayPal">Pay with PayPal</button>
+      <button class="coinbase-btn" id="payWithCoinbase">Pay with Coinbase</button>
     </div>
   </div>
 
-  <!-- Firebase + Logic -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+  <script>
+    const buyButtons = document.querySelectorAll('.buy-btn');
+    const modal = document.getElementById('modal');
+    let selectedAmount = 0;
+    let selectedPrice = 0;
 
-    const firebaseConfig = {
-  apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
-  authDomain: "terpzyverseclubsocial.firebaseapp.com",
-  projectId: "terpzyverseclubsocial",
-  storageBucket: "terpzyverseclubsocial.firebasestorage.app",
-  messagingSenderId: "125077088870",
-  appId: "1:125077088870:web:91195a40d290c6bff09ba7"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    let userEmail = '';
-
-    onAuthStateChanged(auth, user => {
-      if (user) userEmail = user.email;
-      else alert("Please log in first.");
+    buyButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const pkg = button.parentElement;
+        selectedAmount = pkg.getAttribute('data-amount');
+        selectedPrice = pkg.getAttribute('data-price');
+        modal.style.display = 'flex';
+      });
     });
 
-    window.openModal = () => {
-      document.getElementById('modal').style.display = 'flex';
-    };
+    document.getElementById('payWithPayPal').addEventListener('click', () => {
+      window.location.href = `https://us-central1-terpzyverseclubsocial.cloudfunctions.net/confirmPayPal?amount=${selectedAmount}&price=${selectedPrice}`;
+    });
 
-    window.closeModal = () => {
-      document.getElementById('modal').style.display = 'none';
-    };
+    document.getElementById('payWithCoinbase').addEventListener('click', () => {
+      window.location.href = `https://us-central1-terpzyverseclubsocial.cloudfunctions.net/createCoinbaseCharge?amount=${selectedAmount}&price=${selectedPrice}`;
+    });
 
-    window.buyCoinbase = async () => {
-      const amount = document.getElementById('packageSelect').value;
-      try {
-        const res = await fetch("https://us-central1-terpzyverseclubsocial.cloudfunctions.net/createCoinbaseCharge", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: userEmail, amount })
-        });
-        const data = await res.json();
-        if (data.hosted_url) {
-          window.location.href = data.hosted_url;
-        } else {
-          alert("Error: " + JSON.stringify(data));
-        }
-      } catch (err) {
-        alert("Coinbase Error: " + err.message);
+    // Close modal if clicking outside
+    window.addEventListener('click', e => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
       }
-    };
-
-    window.buyPayPal = async () => {
-      const amount = document.getElementById('packageSelect').value;
-      try {
-        const res = await fetch("https://us-central1-terpzyverseclubsocial.cloudfunctions.net/confirmPayPal", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: userEmail, amount })
-        });
-        const data = await res.json();
-        alert("PayPal Response: " + JSON.stringify(data));
-      } catch (err) {
-        alert("PayPal Error: " + err.message);
-      }
-    };
+    });
   </script>
-
 </body>
 </html>
