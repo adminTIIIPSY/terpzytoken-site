@@ -1,8 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Buy TerpzyTokens</title>
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+
+    #modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #111;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px red;
+    }
+
+    button {
+      background: red;
+      color: white;
+      padding: 10px 25px;
+      font-size: 16px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
 <body>
 
   <h1>Buy TerpzyTokens ($TRPZ)</h1>
 
-  <label for="packageSelect">Select Package:</label>
+  <label for="packageSelect">Select Package:</label><br><br>
   <select id="packageSelect">
     <option value="25">25 $TRPZ – $25</option>
     <option value="50">50 $TRPZ – $50</option>
@@ -24,17 +76,18 @@
     </div>
   </div>
 
+  <!-- Firebase + Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "terpzyverseclubsocial.firebaseapp.com",
-      projectId: "terpzyverseclubsocial",
-      storageBucket: "terpzyverseclubsocial.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
+  authDomain: "terpzyverseclubsocial.firebaseapp.com",
+  projectId: "terpzyverseclubsocial",
+  storageBucket: "terpzyverseclubsocial.firebasestorage.app",
+  messagingSenderId: "125077088870",
+  appId: "1:125077088870:web:91195a40d290c6bff09ba7"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -43,17 +96,18 @@
 
     onAuthStateChanged(auth, user => {
       if (user) userEmail = user.email;
+      else alert("Please log in first.");
     });
 
-    function openModal() {
+    window.openModal = () => {
       document.getElementById('modal').style.display = 'flex';
-    }
+    };
 
-    function closeModal() {
+    window.closeModal = () => {
       document.getElementById('modal').style.display = 'none';
-    }
+    };
 
-    async function buyCoinbase() {
+    window.buyCoinbase = async () => {
       const amount = document.getElementById('packageSelect').value;
       try {
         const res = await fetch("https://us-central1-terpzyverseclubsocial.cloudfunctions.net/createCoinbaseCharge", {
@@ -62,13 +116,17 @@
           body: JSON.stringify({ email: userEmail, amount })
         });
         const data = await res.json();
-        window.location.href = data.hosted_url || "/";
+        if (data.hosted_url) {
+          window.location.href = data.hosted_url;
+        } else {
+          alert("Error: " + JSON.stringify(data));
+        }
       } catch (err) {
-        alert("Coinbase failed: " + err.message);
+        alert("Coinbase Error: " + err.message);
       }
-    }
+    };
 
-    async function buyPayPal() {
+    window.buyPayPal = async () => {
       const amount = document.getElementById('packageSelect').value;
       try {
         const res = await fetch("https://us-central1-terpzyverseclubsocial.cloudfunctions.net/confirmPayPal", {
@@ -77,11 +135,12 @@
           body: JSON.stringify({ email: userEmail, amount })
         });
         const data = await res.json();
-        alert("PayPal confirmed: " + JSON.stringify(data));
+        alert("PayPal Response: " + JSON.stringify(data));
       } catch (err) {
-        alert("PayPal failed: " + err.message);
+        alert("PayPal Error: " + err.message);
       }
-    }
+    };
   </script>
 
 </body>
+</html>
