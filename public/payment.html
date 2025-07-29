@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Processing Payment – TerpzyVerse</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #000000, #1a001a);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .card {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 15px red, 0 0 25px purple;
+      max-width: 400px;
+    }
+
+    .loading {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: #ff66cc;
+    }
+
+    .error {
+      color: #ff4444;
+      margin-top: 1rem;
+    }
+
+    .success {
+      color: #66ff66;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Processing Your Purchase...</h2>
+    <div id="info"></div>
+    <div class="loading" id="status">Please wait while we confirm your request.</div>
+    <div class="error" id="error"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
+      authDomain: "terpzyverseclubsocial.firebaseapp.com",
+      projectId: "terpzyverseclubsocial",
+      storageBucket: "terpzyverseclubsocial.appspot.com",
+      messagingSenderId: "125077088870",
+      appId: "1:125077088870:web:91195a40d290c6bff09ba7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const functions = getFunctions(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const method = params.get("method");
+    const amount = params.get("amount");
+
+    const info = document.getElementById("info");
+    const status = document.getElementById("status");
+    const errorDiv = document.getElementById("error");
+
+    if (!method || !amount) {
+      errorDiv.textContent = "Missing payment method or amount.";
+      status.textContent = "";
+    } else {
+      info.innerHTML = `<p>Buying <strong>$TRPZ</strong> worth <strong>$${amount}</strong> via <strong>${method.toUpperCase()}</strong></p>`;
+
+      if (method === "coinbase") {
+        const createCharge = httpsCallable(functions, 'createCoinbaseCharge');
+        createCharge({ amount: amount })
+          .then((result) => {
+            const url = result.data.hosted_url;
+            window.location.href = url;
+          })
+          .catch((err) => {
+            errorDiv.textContent = "Coinbase Error: " + (err.message || "Failed to create charge.");
+            status.textContent = "";
+          });
+
+      } else if (method === "paypal") {
+        const confirmPayPal = httpsCallable(functions, 'confirmPayPal');
+        confirmPayPal({ amount: amount })
+          .then((result) => {
+            const url = result.data.redirect;
+            window.location.href = url;
+          })
+          .catch((err) => {
+            errorDiv.textContent = "PayPal Error: " + (err.message || "Failed to initiate payment.");
+            status.textContent = "";
+          });
+
+      } else {
+        errorDiv.textContent = "Unsupported payment method.";
+        status.textContent = "";
+      }
+    }
+  </script>
+</body>
+</html>
