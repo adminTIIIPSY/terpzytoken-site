@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to TerpzyVerse/ClubSocial!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: url('club-bg-neon.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Orbitron', sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      padding: 2em;
+    }
+
+    .box {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 3em;
+      border-radius: 12px;
+      box-shadow: 0 0 15px red, 0 0 30px green;
+      max-width: 500px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 2em;
+    }
+
+    .loader {
+      border: 6px solid #222;
+      border-top: 6px solid #00ffcc;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1.2s linear infinite;
+      margin: 0 auto 1em;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    a.button {
+      background: red;
+      color: white;
+      padding: 0.8rem 2rem;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-shadow: 0 0 10px red;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="loader"></div>
+    <h1>Profile Setup Complete!</h1>
+    <p>Welcome to the ClubSocial dashboard. You're all set!</p>
+    <a href="dashboard.html" class="button">Enter Dashboard</a>
+  </div>
+</body>
+</html>
