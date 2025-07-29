@@ -9,13 +9,11 @@ admin.initializeApp();
 const db = admin.firestore();
 const { Timestamp } = admin.firestore;
 
-// Firebase config values
 const PAYPAL_ID = functions.config().paypal.client_id;
 const PAYPAL_SECRET = functions.config().paypal.secret;
 coinbase.Client.init(functions.config().coinbase.api_key);
 const WEBHOOK_SECRET = functions.config().coinbase.webhook_secret;
 
-// PayPal endpoint
 const PAYPAL_API = 'https://api-m.sandbox.paypal.com/v2/checkout/orders';
 
 // 1) Confirm PayPal purchase
