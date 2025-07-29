@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>ClubSocial Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -11,82 +11,122 @@
       background-size: cover;
       font-family: 'Orbitron', sans-serif;
       color: white;
+      padding: 20px;
+    }
+
+    header {
       text-align: center;
-      padding-top: 2em;
+      margin-bottom: 20px;
     }
-    .card {
-      background: rgba(0, 0, 0, 0.85);
-      border-radius: 16px;
-      display: inline-block;
-      padding: 2em;
-      box-shadow: 0 0 15px red, 0 0 25px purple;
+
+    header h1 {
+      font-size: 2.5em;
+      text-shadow: 0 0 10px red, 0 0 20px green;
     }
-    .avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-top: 1em;
-      box-shadow: 0 0 15px green;
-    }
-    .wallet {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1em 2em;
+
+    .wallet, .actions {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
       border-radius: 12px;
-      margin-top: 1.5em;
-      box-shadow: 0 0 12px green;
+      margin-bottom: 20px;
+      box-shadow: 0 0 15px red, 0 0 25px green;
     }
-    .wallet span {
-      display: block;
-      margin: 0.5em 0;
+
+    .wallet h2, .actions h2 {
+      text-shadow: 0 0 5px red;
+    }
+
+    .wallet p {
       font-size: 1.2em;
+      margin: 10px 0;
     }
-    .buttons {
-      margin-top: 2em;
-    }
-    .buttons button {
-      margin: 0.5em;
-      padding: 0.8em 1.5em;
+
+    .actions button, .actions a {
+      margin: 10px;
+      padding: 10px 20px;
       font-size: 1em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
       background: red;
       color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
       box-shadow: 0 0 10px red;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .transfer {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .transfer input, .transfer select {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1em;
+    }
+
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .actions button, .actions a {
+        width: 100%;
+        margin: 5px 0;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Welcome, <span id="username">Loading...</span></h1>
-    <img id="avatar" class="avatar" src="" alt="Avatar" />
-    <div class="wallet">
-      <h2>VaultNova Wallet</h2>
-      <span>GC: <strong id="gcBalance">–</strong></span>
-      <span>SC: <strong id="scBalance">–</strong></span>
-      <span>$TRPZ: <strong id="trpzBalance">–</strong></span>
-    </div>
-    <div class="buttons">
-      <button onclick="location.href='store.html'">Open Store</button>
-      <button onclick="location.href='profile.html'">Edit Profile</button>
-      <button onclick="location.href='transfer.html'">Transfer $TRPZ</button>
-      <button onclick="location.href='logout.html'">Log Out</button>
-    </div>
+
+  <header>
+    <h1>Welcome to VaultNova</h1>
+    <p id="usernameDisplay"></p>
+    <img id="avatarDisplay" src="" alt="Avatar" class="avatar" />
+  </header>
+
+  <div class="wallet">
+    <h2>Wallet Balances</h2>
+    <p>💰 Gold Coins (GC): <span id="gcBalance">0</span></p>
+    <p>🌟 Sweeps Coins (SC): <span id="scBalance">0</span></p>
+    <p>🚀 TerpzyToken ($TRPZ): <span id="trpzBalance">0</span></p>
+  </div>
+
+  <div class="actions">
+    <h2>Actions</h2>
+    <a href="store.html">🛒 Visit Store</a>
+    <a href="edit-profile.html">🖼️ Edit Profile</a>
+    <a href="index.html">🎮 Back to Lobby</a>
+  </div>
+
+  <div class="wallet">
+    <h2>Transfer $TRPZ</h2>
+    <form id="transferForm" class="transfer">
+      <input type="text" id="recipient" placeholder="Recipient Email" required />
+      <input type="number" id="amount" placeholder="Amount of $TRPZ to send" required />
+      <button type="submit">Transfer</button>
+    </form>
+    <p id="transferMsg"></p>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const firebaseConfig = {
-  apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
-  authDomain: "terpzyverseclubsocial.firebaseapp.com",
-  projectId: "terpzyverseclubsocial",
-  storageBucket: "terpzyverseclubsocial.firebasestorage.app",
-  messagingSenderId: "125077088870",
-  appId: "1:125077088870:web:91195a40d290c6bff09ba7"
+      apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
+      authDomain: "terpzyverseclubsocial.firebaseapp.com",
+      projectId: "terpzyverseclubsocial",
+      storageBucket: "terpzyverseclubsocial.firebasestorage.app",
+      messagingSenderId: "125077088870",
+      appId: "1:125077088870:web:91195a40d290c6bff09ba7"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -95,21 +135,64 @@
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const uid = user.uid;
-        const docRef = doc(db, "users", uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          document.getElementById("username").textContent = data.username || "No Username";
-          document.getElementById("avatar").src = `assets/avatars/${data.avatar}`;
-          document.getElementById("gcBalance").textContent = data.wallet?.gc ?? 0;
-          document.getElementById("scBalance").textContent = data.wallet?.sc ?? 0;
-          document.getElementById("trpzBalance").textContent = data.wallet?.trpz ?? 0;
-        } else {
-          document.getElementById("username").textContent = "User data not found";
+        const docRef = doc(db, "users", user.uid);
+        const snap = await getDoc(docRef);
+
+        if (snap.exists()) {
+          const data = snap.data();
+          document.getElementById("usernameDisplay").textContent = `Username: ${data.username}`;
+          document.getElementById("avatarDisplay").src = `assets/avatars/${data.avatar}`;
+          document.getElementById("gcBalance").textContent = data.gc || 0;
+          document.getElementById("scBalance").textContent = data.sc || 0;
+          document.getElementById("trpzBalance").textContent = data.trpz || 0;
         }
       } else {
         window.location.href = "login.html";
+      }
+    });
+
+    document.getElementById("transferForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const recipient = document.getElementById("recipient").value.trim();
+      const amount = parseFloat(document.getElementById("amount").value);
+      const msg = document.getElementById("transferMsg");
+
+      if (amount < 0.01) return msg.textContent = "Minimum transfer is 0.01 $TRPZ";
+
+      try {
+        const sender = auth.currentUser;
+        const senderRef = doc(db, "users", sender.uid);
+        const senderSnap = await getDoc(senderRef);
+
+        if (!senderSnap.exists()) return;
+
+        const senderData = senderSnap.data();
+        if ((senderData.trpz || 0) < amount) {
+          msg.textContent = "Insufficient balance.";
+          return;
+        }
+
+        const usersRef = doc(db, "emailToUid", recipient.toLowerCase());
+        const uidSnap = await getDoc(usersRef);
+
+        if (!uidSnap.exists()) {
+          msg.textContent = "Recipient not found.";
+          return;
+        }
+
+        const recipientUid = uidSnap.data().uid;
+        const recipientRef = doc(db, "users", recipientUid);
+        const recipientSnap = await getDoc(recipientRef);
+        const recipientData = recipientSnap.data();
+
+        // update balances
+        await updateDoc(senderRef, { trpz: (senderData.trpz || 0) - amount });
+        await updateDoc(recipientRef, { trpz: (recipientData.trpz || 0) + amount });
+
+        msg.textContent = `Transferred ${amount} $TRPZ to ${recipient}.`;
+      } catch (error) {
+        console.error(error);
+        msg.textContent = "Transfer failed.";
       }
     });
   </script>
