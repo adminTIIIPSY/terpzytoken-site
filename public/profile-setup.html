@@ -73,7 +73,7 @@
 </head>
 <body>
   <div class="card">
-    <h2>Welcome to ClubSocial!</h2>
+    <h2>Welcome to TerpzyVerse/ClubSocial!</h2>
     <p>Choose your username and avatar to complete setup:</p>
 
     <input type="text" id="username" placeholder="Enter username" required />
@@ -138,7 +138,7 @@
             avatar: selectedAvatar
           }, { merge: true });
 
-          window.location.href = "dashboard.html";
+          window.location.href = "profile-confirmed.html";
         } else {
           msgBox.textContent = "Not logged in. Please return to login.";
         }
