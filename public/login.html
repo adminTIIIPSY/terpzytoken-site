@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TerpzyVerse – Log In</title>
+  <title>ClubSocial Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
     body {
@@ -12,25 +12,21 @@
       font-family: 'Orbitron', sans-serif;
       color: white;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
     }
     .card {
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.85);
       padding: 2em;
       border-radius: 12px;
-      box-shadow: 0 0 15px red, 0 0 30px purple;
-      width: 320px;
+      box-shadow: 0 0 15px red, 0 0 30px green;
+      width: 340px;
       text-align: center;
-    }
-    .card h1 {
-      margin-bottom: 1rem;
-      font-size: 1.8em;
     }
     .card input {
       width: 100%;
-      padding: 0.5rem;
+      padding: 0.7rem;
       margin: 0.5rem 0;
       border: none;
       border-radius: 6px;
@@ -45,12 +41,7 @@
       font-size: 1rem;
       margin-top: 1rem;
     }
-    .error { color: #ff6666; margin-top: 0.5rem; }
-    .success { color: #66ff66; margin-top: 0.5rem; }
-    a {
-      color: #66ccff;
-      text-decoration: none;
-    }
+    .msg { margin-top: 1rem; color: #ff6666; }
   </style>
 </head>
 <body>
@@ -61,43 +52,49 @@
       <input type="password" id="loginPassword" placeholder="Password" required />
       <button type="submit">Log In</button>
     </form>
-    <div id="loginMsg"></div>
-    <p style="margin-top: 1em;">
-      Don’t have an account?
-      <a href="/register.html">Register</a>
+    <div class="msg" id="loginMsg"></div>
+    <p style="margin-top:1em;">
+      Don't have an account?
+      <a href="register.html" style="color:#66ccff;">Sign up</a>
     </p>
   </div>
 
   <script type="module">
-    import { login } from './scripts/login.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    const form = document.getElementById("loginForm");
-    const msg  = document.getElementById("loginMsg");
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
 
-    form.addEventListener("submit", async (e) => {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      msg.textContent = "";
-
-      const email = form.loginEmail.value;
-      const pw = form.loginPassword.value;
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const msgBox = document.getElementById("loginMsg");
 
       try {
-        await login(email, pw);
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCred.user;
+        const userDoc = await getDoc(doc(db, "users", user.uid));
 
-        // Redirect based on domain
-        const domain = window.location.hostname;
-
-        if (domain.includes("clubsocial.click")) {
-          window.location.href = "/lobby.html";
-        } else if (domain.includes("terpzyverse.com")) {
-          window.location.href = "/dashboard.html";
+        if (userDoc.exists() && userDoc.data().username) {
+          window.location.href = "dashboard.html";
         } else {
-          window.location.href = "/";
+          window.location.href = "profile-setup.html";
         }
-
       } catch (err) {
-        msg.textContent = err.message;
-        msg.className = "error";
+        msgBox.textContent = "Login failed: " + err.message;
       }
     });
   </script>
