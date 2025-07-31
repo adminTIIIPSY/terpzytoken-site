@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Daily Spin Wheel</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
+  authDomain: "terpzyverseclubsocial.firebaseapp.com",
+  projectId: "terpzyverseclubsocial",
+  storageBucket: "terpzyverseclubsocial.firebasestorage.app",
+  messagingSenderId: "125077088870",
+  appId: "1:125077088870:web:91195a40d290c6bff09ba7"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const functions = getFunctions(app);
+  </script>
+  <style>
+    html, body {
+      margin: 0; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: url('assets/tiiipsy-wheel-bg.png') no-repeat center/cover;
+      font-family: sans-serif;
+    }
+    #wheel-container {
+      position: relative;
+      width: 400px; height: 400px;
+    }
+    #wheel {
+      width: 100%; height: 100%; border-radius: 50%;
+      position: relative; overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      transition: transform 4s ease-out;
+    }
+    .segment {
+      position: absolute; width: 50%; height: 50%;
+      top: 50%; left: 50%;
+      transform-origin: 0% 0%;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .segment span {
+      position: absolute; bottom: 10px; left: 10px;
+      transform-origin: 0 0;
+      color: #fff; font-size: 14px;
+    }
+    #pointer {
+      position: absolute; top: -20px; left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 0 15px 20px 15px;
+      border-color: transparent transparent #fff transparent;
+    }
+    #spinBtn {
+      position: absolute; bottom: -60px; left: 50%;
+      transform: translateX(-50%);
+      background: none; border: none; cursor: pointer;
+      outline: none;
+    }
+    #spinBtn img {
+      width: 80px; user-select: none;
+    }
+    @keyframes tiiipsySpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    #result {
+      position: absolute; top: -60px; left: 50%;
+      transform: translateX(-50%);
+      color: #fff; font-size: 20px; text-shadow: 0 0 5px #000;
+    }
+  </style>
+</head>
+<body>
+  <div id="wheel-container">
+    <div id="wheel"></div>
+    <div id="pointer"></div>
+    <div id="result"></div>
+    <button id="spinBtn">
+      <img src="assets/tiiipsy-spin.png" alt="Spin" />
+    </button>
+  </div>
+  <script type="module">
+    // Setup wheel
+    const prizes = ['50gc','0.05sc','0.05TRPZ','100gc','0.10sc','0.10TRPZ','500gc','0.50sc','0.50TRPZ','1000gc','1.00sc','1.00TRPZ','5.00sc'];
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spinBtn');
+    const resultDiv = document.getElementById('result');
+    const segmentAng = 360 / prizes.length;
+
+    prizes.forEach((p, i) => {
+      const seg = document.createElement('div');
+      seg.className = 'segment';
+      seg.style.transform = `rotate(${i * segmentAng}deg) skewY(${90 - segmentAng}deg)`;
+      seg.innerHTML = `<span style="transform: skewY(${segmentAng - 90}deg) rotate(${segmentAng / 2}deg);">${p}</span>`;
+      wheel.appendChild(seg);
+    });
+
+    spinBtn.addEventListener('click', async () => {
+      spinBtn.disabled = true;
+      resultDiv.textContent = '';
+      spinBtn.querySelector('img').style.animation = 'tiiipsySpin 2s ease-out';
+
+      try {
+        const spinCall = httpsCallable(functions, 'spinWheel');
+        const { data } = await spinCall();
+        const idx = prizes.indexOf(data.prize);
+        const spins = 3600 + (idx + 0.5) * segmentAng * -1;
+        wheel.style.transform = `rotate(${spins}deg)`;
+
+        wheel.addEventListener('transitionend', () => {
+          resultDiv.textContent = `🎉 You won ${data.prize}!`;
+          spinBtn.disabled = false;
+          spinBtn.querySelector('img').style.animation = '';
+        }, { once: true });
+      } catch(err) {
+        resultDiv.textContent = err.message;
+        spinBtn.disabled = false;
+        spinBtn.querySelector('img').style.animation = '';
+      }
+    });
+  </script>
+</body>
+</html>
