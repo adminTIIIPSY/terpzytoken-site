@@ -8,8 +8,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth }        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFunctions, httpsCallable }
-      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
+    import { getFunctions }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
@@ -31,6 +30,7 @@
       --tile-count: 13;         /* total number of tiles */
       --spin-duration: 2s;      /* length of the spin animation */
       --target-index: 0;        /* updated dynamically by JS */
+      --marker-gap: 60px;       /* width of the transparent gap in the marker */
     }
 
     html, body {
@@ -75,16 +75,25 @@
       font-size: 1rem;
     }
 
-    /* ── MARKER LINE ──────────────────────────────────── */
+    /* ── MARKER LINE WITH GAP ─────────────────────────── */
     .marker {
       position: absolute;
       top: 50%;
       left: 0;
       width: 100%;
-      border-top: 3px solid crimson;
-      transform: translateY(-1.5px);
+      height: 0;
       pointer-events: none;
     }
+    .marker::before,
+    .marker::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: calc(50% - (var(--marker-gap) / 2));
+      border-top: 3px solid crimson;
+    }
+    .marker::before { left: 0; }
+    .marker::after  { right: 0; }
 
     @keyframes spin {
       to {
@@ -155,14 +164,11 @@
       try {
         const { data } = await spinFn();
         const idx = data.prizeIndex;
-        // set the CSS var so the correct tile lands center
         document.documentElement.style.setProperty('--target-index', idx);
-        // trigger the spin animation
         reelEl.classList.remove('spin');
         void reelEl.offsetWidth;
         reelEl.classList.add('spin');
 
-        // once animation ends, show the prize
         const duration = parseFloat(
           getComputedStyle(document.documentElement)
             .getPropertyValue('--spin-duration')
@@ -173,7 +179,6 @@
         }, duration);
 
       } catch (err) {
-        // cooldown or auth errors
         if (err.code === 'failed-precondition') {
           resultEl.textContent = 'Please wait 24h to spin again.';
         } else if (err.code === 'unauthenticated') {
