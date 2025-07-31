@@ -119,3 +119,45 @@ exports.releaseTokens = functions.pubsub
     await batch.commit();
     console.log(`Released ${snaps.size} purchases`);
   });
+
+
+// 5) Daily spin wheel
+const spinPrizes = [
+  '50gc','0.05sc','0.05TRPZ','100gc','0.10sc','0.10TRPZ',
+  '500gc','0.50sc','0.50TRPZ','1000gc','1.00sc','1.00TRPZ','5.00sc'
+];
+
+exports.spinWheel = functions.https.onCall(async (_, ctx) => {
+  const uid = ctx.auth?.uid;
+  if (!uid) throw new functions.https.HttpsError('unauthenticated','Must be logged in');
+
+  const userSpinRef = db.collection('spins').doc(uid);
+  const rec = await userSpinRef.get();
+  const now = Timestamp.now();
+
+  if (rec.exists) {
+    const last = rec.data().timestamp;
+    if (now.toMillis() - last.toMillis() < 24*60*60*1000) {
+      throw new functions.https.HttpsError('failed-precondition','Only one spin per 24h');
+    }
+  }
+
+  // pick and record prize
+  const prize = spinPrizes[Math.floor(Math.random()*spinPrizes.length)];
+  await userSpinRef.set({ prize, timestamp: now });
+
+  // credit wallet
+  const walletRef = db.collection('wallets').doc(uid);
+  await db.runTransaction(async tx => {
+    const snap = await tx.get(walletRef);
+    const bal = snap.exists ? snap.data().balance : { gc:0, sc:0, trpz:0 };
+    const amount = parseFloat(prize);
+    const type = prize.replace(/[^a-zA-Z]/g,'').toLowerCase();
+    if (type === 'gc') bal.gc += amount;
+    else if (type === 'sc') bal.sc += amount;
+    else if (type === 'trpz') bal.trpz += amount;
+    tx.set(walletRef, { balance: bal }, { merge: true });
+  });
+
+  return { prize };
+});
