@@ -2,34 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Daily Spin Wheel</title>
-
-  <!-- Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth }        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFunctions }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
-      authDomain: "terpzyverseclubsocial.firebaseapp.com",
-      projectId: "terpzyverseclubsocial",
-      storageBucket: "terpzyverseclubsocial.firebasestorage.app",
-      messagingSenderId: "125077088870",
-      appId:         "1:125077088870:web:91195a40d290c6bff09ba7"
-    };
-    const app       = initializeApp(firebaseConfig);
-    const auth      = getAuth(app);
-    const functions = getFunctions(app);
-  </script>
-
+  <title>Daily Bonus Spin</title>
   <style>
     /* ── CONFIG ───────────────────────────────────────── */
     :root {
       --tile-height: 80px;      /* height of each tile */
       --tile-count: 13;         /* total number of tiles */
       --spin-duration: 2s;      /* length of the spin animation */
-      --target-index: 0;        /* updated dynamically by JS */
+      --target-index: 0;        /* will be set dynamically */
       --marker-gap: 60px;       /* width of the transparent gap in the marker */
     }
 
@@ -38,7 +18,7 @@
       width: 100%; height: 100%;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      background: url('assets/tiiipsy-wheel-bg.png') center/cover no-repeat;
+      background: #111;
       font-family: 'Orbitron', sans-serif;
       color: #fff;
     }
@@ -51,7 +31,7 @@
       overflow: hidden;
       border: 3px solid #444;
       border-radius: 8px;
-      background: #111;
+      background: #222;
       margin-bottom: 1rem;
     }
 
@@ -151,30 +131,54 @@
   <div id="result"></div>
 
   <script type="module">
-    import { httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
+    import { initializeApp }     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth }           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFunctions, httpsCallable }
+                                  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
-    const spinFn   = httpsCallable(functions, 'spinDailyBonus');
+    // 1. Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAAJfscsLm4TdBzbYZ5dYa1BWZwpSPcVf8",
+      authDomain: "terpzyverseclubsocial.firebaseapp.com",
+      projectId: "terpzyverseclubsocial",
+      storageBucket: "terpzyverseclubsocial.firebasestorage.app",
+      messagingSenderId: "125077088870",
+      appId:         "1:125077088870:web:91195a40d290c6bff09ba7"
+    };
+    const app       = initializeApp(firebaseConfig);
+    const auth      = getAuth(app);
+    const functions = getFunctions(app);
+
+    // 2. Get the callable Cloud Function
+    const spinFn = httpsCallable(functions, 'spinDailyBonus');
+
+    // 3. UI elements
     const reelEl   = document.getElementById('reel');
     const btn      = document.getElementById('spinBtn');
     const resultEl = document.getElementById('result');
 
+    // 4. Spin button logic
     btn.addEventListener('click', async () => {
       btn.disabled = true;
       resultEl.textContent = 'Spinning…';
       try {
         const { data } = await spinFn();
-        const idx = data.prizeIndex;
+        const idx   = data.prizeIndex;
+        const prize = data.prize;
+
+        // Set the CSS var and trigger the animation
         document.documentElement.style.setProperty('--target-index', idx);
         reelEl.classList.remove('spin');
         void reelEl.offsetWidth;
         reelEl.classList.add('spin');
 
+        // After animation, show the prize
         const duration = parseFloat(
           getComputedStyle(document.documentElement)
             .getPropertyValue('--spin-duration')
         ) * 1000;
         setTimeout(() => {
-          resultEl.textContent = `🎉 You won ${data.prize}!`;
+          resultEl.textContent = `🎉 You won ${prize}!`;
           btn.disabled = false;
         }, duration);
 
