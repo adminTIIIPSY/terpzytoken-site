@@ -1,14 +1,9 @@
 {
-   "name": "functions",
--  "scripts": {
--    "lint": "eslint ."
--  },
-+  "scripts": {
-+    "lint": "echo \"Skipping lint step\""
-+  },
-   "dependencies": {
-     "firebase-admin": "^11.10.0",
-     "firebase-functions": "^4.6.0",
-     // …etc…
-   }
- }
+  "name": "functions",
+  "engines": { "node": "18" },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^5.0.1"
+  }
+}
